@@ -16,11 +16,11 @@
         </div>
     </header>
     <span class="MainContent">
-        <div class="SideBar">
-            <div class="Selectable" onclick="">SET</div>
-            <div class="Selectable" onclick="">FFT</div>
-            <div class="Selectable" onclick="">DFT</div>
-            <div class="Selectable" onclick="">CFT</div>
+        <div id="SideBar">
+            <div class="Selectable" id="FFTButton" onclick="FFTButtonPress();">FFT</div>
+            <div class="Selectable" id="DFTButton" onclick="DFTButtonPress();">DFT</div>
+            <div class="Selectable" id="CFTButton" onclick="CFTButtonPress();">CFT</div>
+            <div class="Selectable" id="SETButton" onclick="SETButtonPress();">SET</div>
             <div id="PenColors">
                 <div class="ColorRow">
                     <span class="Color" onclick="">??</span>
@@ -41,8 +41,12 @@
             </div>
             <button id="CalcButton"> Calc </button>
         </div>
+        <textarea id="FFTInput">Test</textarea>
+        <textarea id="DFTInput">Test</textarea>
+        <textarea id="CFTInput">Test</textarea>
+        <textarea id="SETInput">Test</textarea>
         <canvas id="FourierCanvas"></canvas>
     </span>
-    <script src="EEP0Assembler.js"></script>
+    <script src="Fourier.js"></script>
 </body>
 </html>

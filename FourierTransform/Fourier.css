@@ -48,11 +48,12 @@ html, body {
     display: inline-block;
 }
 
-.SideBar {
+#SideBar {
     align-items:flex-start;
     justify-content: flex-start;
     vertical-align: auto;
     text-align: center;
+    z-index: 2;
 }
 
 .Selectable {
@@ -129,10 +130,148 @@ canvas {
 
 button {
     margin-top: 4vh;
-    height: 1vw;
-    width: 1vw;
-    padding-left: 1vw;
-    padding-right: 1vw;
+    text-align: center;
+    padding-left: 2vw;
+    padding-right: 2vw;
     padding-top: 2vh;
     padding-bottom: 2vh;
+}
+
+#FFTInput {
+    padding:0px;
+    transform: translateX(-100%);
+    opacity: 0;
+    transition: opacity .25s, transform .5s;
+    background-color: #333333;
+    color: white;
+    border: none;
+    font-family: monospace;
+    width: calc(20vw +  1.2vmax*3.4);
+    height: calc(10.1vh + 1.2vmax*1.2);
+    z-index: 1;
+    position: absolute;
+    resize: none;
+    text-align: center;
+    font-size: 1vmax;
+}
+#FFTInput:focus{
+    border-color: #333333;
+    outline: none;
+}
+
+#FFTInput.show {
+    transform: translateX(calc(5vw + (1.2vmax*3.5)));
+    opacity: 1;
+}
+
+#FFTInput-Button{
+    text-align: center;
+    overflow: hidden;
+    justify-content: flex-start;
+    align-items: flex-start;
+}
+
+#DFTInput {
+    padding:0px;
+    margin-top: calc(9.6vh + 1.2vmax*1.2 + 2px);
+    transform: translateX(-100%);
+    opacity: 0;
+    transition: opacity .25s, transform .5s;
+    background-color: #333333;
+    color: white;
+    border: none;
+    font-family: monospace;
+    width: calc(20vw +  1.2vmax*3.4);
+    height: calc(10.1vh + 1.2vmax*1.2);
+    z-index: 1;
+    position: absolute;
+    resize: none;
+    text-align: center;
+    font-size: 1vmax;
+}
+#DFTInput:focus{
+    border-color: #333333;
+    outline: none;
+}
+
+#DFTInput.show {
+    transform: translateX(calc(5vw + (1.2vmax*3.5)));
+    opacity: 1;
+}
+
+#DFTInput-Button{
+    text-align: center;
+    overflow: hidden;
+    justify-content: flex-start;
+    align-items: flex-start;
+}
+
+#CFTInput {
+    padding:0px;
+    margin-top: calc((9.6vh + 1.2vmax*1.2 + 2px)*2);
+    transform: translateX(-100%);
+    opacity: 0;
+    transition: opacity .25s, transform .5s;
+    background-color: #333333;
+    color: white;
+    border: none;
+    font-family: monospace;
+    width: calc(20vw +  1.2vmax*3.4);
+    height: calc(10.1vh + 1.2vmax*1.2);
+    z-index: 1;
+    position: absolute;
+    resize: none;
+    text-align: center;
+    font-size: 1vmax;
+}
+#CFTInput:focus{
+    border-color: #333333;
+    outline: none;
+}
+
+#CFTInput.show {
+    transform: translateX(calc(5vw + (1.2vmax*3.5)));
+    opacity: 1;
+}
+
+#CFTInput-Button{
+    text-align: center;
+    overflow: hidden;
+    justify-content: flex-start;
+    align-items: flex-start;
+}
+
+#SETInput {
+    padding:0px;
+    margin-top: calc((9.6vh + 1.2vmax*1.2 + 2px)*3);
+    transform: translateX(-100%);
+    opacity: 0;
+    transition: opacity .25s, transform .5s;
+    background-color: #333333;
+    color: white;
+    border: none;
+    font-family: monospace;
+    width: calc(20vw +  1.2vmax*3.4);
+    height: calc(10.1vh + 1.2vmax*1.2);
+    z-index: 1;
+    position: absolute;
+    resize: none;
+    text-align: center;
+    font-size: 1vmax;
+}
+#SETInput:focus{
+    border-color: #333333;
+    outline: none;
+}
+
+#SETInput.show {
+    transform: translateX(calc(5vw + (1.2vmax*3.5)));
+    opacity: 1;
+}
+
+#SETInput-Button{
+    text-align: center;
+    overflow: hidden;
+    justify-content: flex-start;
+    align-items: flex-start;
 }
