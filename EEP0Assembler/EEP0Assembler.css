@@ -1,0 +1,114 @@
+
+.TextAreas{
+    width: 100%;
+    height: 80vh;
+    border: 1px;
+    display: flex;
+    justify-content: space-between;
+}
+
+h1{
+    font-family: monospace;
+    font-weight: lighter;
+    font-size: 3vh;
+    color: white;
+    margin-left: 1vh;
+    font-variant-caps: small-caps;
+}
+
+.button {
+    background-color: black;
+    border: 2px black;
+    color: white;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    font-family: monospace;
+    font-weight: lighter;
+    margin-top: 10px;
+    width: 100%;
+}
+.button:active{
+    background-color: #111111;
+    border: 2px black;
+    color: white;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    font-weight: lighter;
+    margin-top: 10px;
+    width: 100%;
+}
+
+textarea {
+    overflow: hidden;
+    resize: none;
+    width: 100%;
+    height: 100%;
+    border: 1px solid black;
+    overflow: auto;
+    margin-right: 2px;
+    margin-left: 2px;
+    background-color: #222222;
+    color: white;
+    font-size: 2vh;
+    font-family: monospace;
+}
+
+textarea:focus {
+    outline: none;
+    border-color: #349;
+}
+
+.TopNavBar {
+    flex: 1;
+    width: 100%;
+    background-color: #444444;
+    overflow: hidden;
+    justify-content: flex-start;
+    align-items: center;
+    display: flex;
+    max-height: 6vh;
+    border-bottom: 1px solid #111111;
+}
+
+.TopNavBar a{
+    width: auto;
+    text-align: center;
+    display: flex;
+    background-color: #444444;
+    color: white;
+    display: inline-block;
+    font-family: monospace;
+    font-size: 2vh;
+    padding: 2vh;
+}
+
+.TopNavBar a:hover .Logo, .TopNavBar a:hover{ 
+   background-color: #363636;
+}
+
+header {
+    width: 100%;
+    height: 6vh;
+    background-color: #444444;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+body {
+    margin: 0%;
+    padding: 0%;
+}
+
+.Logo {
+    height: 3vh;
+    display: flex;
+    background-color: #444444;
+    display: inline-block;
+}
