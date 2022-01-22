@@ -84,8 +84,8 @@ textarea:focus {
     color: white;
     display: inline-block;
     font-family: monospace;
-    font-size: 2vh;
-    padding: 2vh;
+    font-size: 2vmin;
+    padding: 2vmin;
 }
 
 .TopNavBar a:hover .Logo, .TopNavBar a:hover{ 

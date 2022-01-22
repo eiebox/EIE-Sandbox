@@ -18,8 +18,8 @@
     color: white;
     display: inline-block;
     font-family: monospace;
-    font-size: 2vh;
-    padding: 2vh;
+    font-size: 2vmin;
+    padding: 2vmin;
 }
 
 .TopNavBar a:hover .Logo, .TopNavBar a:hover{ 
@@ -27,7 +27,7 @@
 }
 
 header {
-    width: 100%;
+    width: 100vw;
     height: 6vh;
     background-color: #444444;
     display: flex;
@@ -35,9 +35,10 @@ header {
     align-items: center;
 }
 
-body {
+html, body {
     margin: 0%;
     padding: 0%;
+    min-height: 100%;
 }
 
 .Logo {
@@ -45,4 +46,93 @@ body {
     display: flex;
     background-color: #444444;
     display: inline-block;
+}
+
+.SideBar {
+    align-items:flex-start;
+    justify-content: flex-start;
+    vertical-align: auto;
+    text-align: center;
+}
+
+.Selectable {
+    text-align: center;
+    padding-right: 3vw;
+    padding-left: 3vw;
+    padding-top: 5vh;
+    padding-bottom: 5vh;
+    font-family: monospace;
+    border-bottom: 1px solid #111111;
+    color: white;
+    font-size: 1.2vmax;
+}
+
+.Selectable:hover {
+    background-color: #555555;
+}
+
+.Selectable:focus {
+    background-color: #222222;
+}
+
+.Selectable:active {
+    background-color: #222222;
+}
+
+.ColorSelector {
+    color: white;
+}
+
+.ColorRow {
+    display: flex;
+    flex: 1;
+    justify-content: space-evenly;
+    align-items: center;
+    text-align: center;
+}
+
+.Color {
+    text-align: center;
+    padding-top: 3vh;
+    padding-bottom: 3vh;
+    padding-left: 2vw;
+    padding-right: 2vw;
+}
+
+.Color:hover {
+    background-color: #555555;
+}
+
+.Color:focus {
+    background-color: #222222;
+}
+
+.Color:active {
+    background-color: #222222;
+}
+
+canvas {
+    max-width: 94vw;
+    max-height: 94vh;
+    background-color: white;
+    height: 94vh;
+    width: 94vw;
+}
+
+.MainContent {
+    flex: 1;
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+    overflow: hidden;
+}
+
+button {
+    margin-top: 4vh;
+    height: 1vw;
+    width: 1vw;
+    padding-left: 1vw;
+    padding-right: 1vw;
+    padding-top: 2vh;
+    padding-bottom: 2vh;
 }
