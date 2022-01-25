@@ -45,6 +45,28 @@ canvas.addEventListener('mousemove', function(evt){
     ctx.stroke();
 })
 
+canvas.addEventListener('touchstart', function(evt){
+    SetMouseDown();
+})
+
+
+canvas.addEventListener('touchend', function(evt){
+    ctx.beginPath();
+    SetMouseUp();
+})
+
+canvas.addEventListener('touchmove', function(evt){
+    if(!mousedown){
+        console.log("MousenotDown");
+        return;
+    }
+    var mousePos = getMousePos(canvas, evt);
+    var message = 'Mouse Position Drag: ' + mousePos.x + ',' + mousePos.y;
+    writeMessage(canvas, message);
+    ctx.lineTo(mousePos.x, mousePos.y);
+    ctx.stroke();
+})
+
 canvas.addEventListener('mousedown', function(evt){
     SetMouseDown();
 })
