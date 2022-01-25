@@ -50,14 +50,14 @@ function OpCodeResolver(Line){
                         Line[1] = "1".concat(Line[1]);
                     }
                     else{
-                        throw("Immediate Operand Too large or small")
+                        throw("Immediate Operand Too large or Small")
                     }
                 }
                 else{
                     throw("Invalid Input Value")
                 }
             }else{
-                throw("Register Error")
+                throw("Register Error (Position or Immediate Operand)")
             }
         }
     }

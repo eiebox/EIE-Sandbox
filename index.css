@@ -1,47 +1,45 @@
 .TopNavBar {
-    flex: 1;
-    width: 100%;
     background-color: #444444;
     overflow: hidden;
     justify-content: flex-start;
     align-items: center;
     display: flex;
     max-height: 6vh;
-    border-bottom: 1px solid #111111;
 }
 
 .TopNavBar a{
-    width: auto;
     text-align: center;
+    display: flex;
     background-color: #444444;
     color: white;
-    display: inline-block;
     font-family: monospace;
-    font-size: 2vmin;
-    padding: 2vmin;
+    font-size: clamp(10px, 1vw, 50px);
+    padding: 1vw;
 }
 
-.TopNavBar a:hover .Logo, .TopNavBar a:hover{ 
+.TopNavBar a:hover #Logo, .TopNavBar a:hover{
    background-color: #363636;
 }
 
 header {
-    width: 100%;
+    width: 100vw;
     height: 6vh;
     background-color: #444444;
     display: flex;
     justify-content: flex-start;
     align-items: center;
+    border-bottom: 1px solid #111111;
 }
 
-body {
+html, body {
     margin: 0%;
     padding: 0%;
+    min-height: 100%;
+    min-width: 100%;
+    overflow: hidden;
 }
 
-.Logo {
-    height: 3vh;
-    display: flex;
+#Logo {
+    height: calc(1vw + 1vh);
     background-color: #444444;
-    display: inline-block;
 }

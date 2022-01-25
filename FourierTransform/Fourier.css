@@ -1,28 +1,23 @@
 .TopNavBar {
-    flex: 1;
-    width: 100%;
     background-color: #444444;
     overflow: hidden;
     justify-content: flex-start;
     align-items: center;
     display: flex;
     max-height: 6vh;
-    border-bottom: 1px solid #111111;
 }
 
 .TopNavBar a{
-    width: auto;
     text-align: center;
     display: flex;
     background-color: #444444;
     color: white;
-    display: inline-block;
     font-family: monospace;
-    font-size: 2vmin;
-    padding: 2vmin;
+    font-size: clamp(10px, 1vw, 40px);
+    padding: 1vw;
 }
 
-.TopNavBar a:hover .Logo, .TopNavBar a:hover{ 
+.TopNavBar a:hover #Logo, .TopNavBar a:hover{
    background-color: #363636;
 }
 
@@ -33,39 +28,36 @@ header {
     display: flex;
     justify-content: flex-start;
     align-items: center;
+    border-bottom: 1px solid #111111;
 }
 
 html, body {
     margin: 0%;
     padding: 0%;
     min-height: 100%;
+    min-width: 100%;
+    overflow: hidden;
 }
 
-.Logo {
-    height: 3vh;
-    display: flex;
+#Logo {
+    height: calc(1vw + 1vh);
     background-color: #444444;
-    display: inline-block;
 }
 
 #SideBar {
-    align-items:flex-start;
     justify-content: flex-start;
-    vertical-align: auto;
     text-align: center;
-    z-index: 2;
 }
 
 .Selectable {
     text-align: center;
-    padding-right: 3vw;
-    padding-left: 3vw;
-    padding-top: 5vh;
-    padding-bottom: 5vh;
+    display: flex;
+    padding: 5vh;
     font-family: monospace;
     border-bottom: 1px solid #111111;
     color: white;
-    font-size: 1.2vmax;
+    font-size: 1.4vh;
+    z-index: inherit;
 }
 
 .Selectable:hover {
@@ -80,24 +72,16 @@ html, body {
     background-color: #222222;
 }
 
-.ColorSelector {
-    color: white;
-}
-
 .ColorRow {
     display: flex;
-    flex: 1;
-    justify-content: space-evenly;
-    align-items: center;
-    text-align: center;
 }
 
 .Color {
     text-align: center;
-    padding-top: 3vh;
-    padding-bottom: 3vh;
-    padding-left: 2vw;
-    padding-right: 2vw;
+    display: inline-block;
+    width: 100%;
+    height: 100%;
+    font-size: 1.4vw;
 }
 
 .Color:hover {
@@ -121,157 +105,21 @@ canvas {
 }
 
 .MainContent {
-    flex: 1;
     display: flex;
     justify-content: flex-start;
     align-items: flex-start;
     overflow: hidden;
 }
 
-button {
+#CalcButton {
     margin-top: 4vh;
     text-align: center;
-    padding-left: 2vw;
-    padding-right: 2vw;
-    padding-top: 2vh;
-    padding-bottom: 2vh;
-}
-
-#FFTInput {
-    padding:0px;
-    transform: translateX(-100%);
-    opacity: 0;
-    transition: opacity .25s, transform .5s;
-    background-color: #333333;
-    color: white;
+    padding: 2vh 2vw;
     border: none;
-    font-family: monospace;
-    width: calc(20vw +  1.2vmax*3.4);
-    height: calc(10.1vh + 1.2vmax*1.2);
-    z-index: 1;
-    position: absolute;
-    resize: none;
-    text-align: center;
-    font-size: 1vmax;
-}
-#FFTInput:focus{
-    border-color: #333333;
-    outline: none;
+    background-color: darkcyan;
 }
 
-#FFTInput.show {
-    transform: translateX(calc(5vw + (1.2vmax*3.5)));
-    opacity: 1;
+#CalcButton:hover {
+    background-color: cyan;
 }
 
-#FFTInput-Button{
-    text-align: center;
-    overflow: hidden;
-    justify-content: flex-start;
-    align-items: flex-start;
-}
-
-#DFTInput {
-    padding:0px;
-    margin-top: calc(9.6vh + 1.2vmax*1.2 + 2px);
-    transform: translateX(-100%);
-    opacity: 0;
-    transition: opacity .25s, transform .5s;
-    background-color: #333333;
-    color: white;
-    border: none;
-    font-family: monospace;
-    width: calc(20vw +  1.2vmax*3.4);
-    height: calc(10.1vh + 1.2vmax*1.2);
-    z-index: 1;
-    position: absolute;
-    resize: none;
-    text-align: center;
-    font-size: 1vmax;
-}
-#DFTInput:focus{
-    border-color: #333333;
-    outline: none;
-}
-
-#DFTInput.show {
-    transform: translateX(calc(5vw + (1.2vmax*3.5)));
-    opacity: 1;
-}
-
-#DFTInput-Button{
-    text-align: center;
-    overflow: hidden;
-    justify-content: flex-start;
-    align-items: flex-start;
-}
-
-#CFTInput {
-    padding:0px;
-    margin-top: calc((9.6vh + 1.2vmax*1.2 + 2px)*2);
-    transform: translateX(-100%);
-    opacity: 0;
-    transition: opacity .25s, transform .5s;
-    background-color: #333333;
-    color: white;
-    border: none;
-    font-family: monospace;
-    width: calc(20vw +  1.2vmax*3.4);
-    height: calc(10.1vh + 1.2vmax*1.2);
-    z-index: 1;
-    position: absolute;
-    resize: none;
-    text-align: center;
-    font-size: 1vmax;
-}
-#CFTInput:focus{
-    border-color: #333333;
-    outline: none;
-}
-
-#CFTInput.show {
-    transform: translateX(calc(5vw + (1.2vmax*3.5)));
-    opacity: 1;
-}
-
-#CFTInput-Button{
-    text-align: center;
-    overflow: hidden;
-    justify-content: flex-start;
-    align-items: flex-start;
-}
-
-#SETInput {
-    padding:0px;
-    margin-top: calc((9.6vh + 1.2vmax*1.2 + 2px)*3);
-    transform: translateX(-100%);
-    opacity: 0;
-    transition: opacity .25s, transform .5s;
-    background-color: #333333;
-    color: white;
-    border: none;
-    font-family: monospace;
-    width: calc(20vw +  1.2vmax*3.4);
-    height: calc(10.1vh + 1.2vmax*1.2);
-    z-index: 1;
-    position: absolute;
-    resize: none;
-    text-align: center;
-    font-size: 1vmax;
-}
-#SETInput:focus{
-    border-color: #333333;
-    outline: none;
-}
-
-#SETInput.show {
-    transform: translateX(calc(5vw + (1.2vmax*3.5)));
-    opacity: 1;
-}
-
-#SETInput-Button{
-    text-align: center;
-    overflow: hidden;
-    justify-content: flex-start;
-    align-items: flex-start;
-}
