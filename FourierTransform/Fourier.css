@@ -10,7 +10,6 @@
 .TopNavBar a{
     text-align: center;
     display: flex;
-    background-color: #444444;
     color: white;
     font-family: monospace;
     font-size: clamp(10px, 1vw, 40px);
@@ -22,13 +21,12 @@
 }
 
 header {
-    width: 100vw;
+    width: 100%;
     height: 6vh;
     background-color: #444444;
     display: flex;
     justify-content: flex-start;
     align-items: center;
-    border-bottom: 1px solid #111111;
 }
 
 html, body {
@@ -45,27 +43,24 @@ html, body {
 }
 
 #SideBar {
-    justify-content: flex-start;
     text-align: center;
 }
 
 .Selectable {
     text-align: center;
+    justify-content: center;
     display: flex;
-    padding: 5vh;
+    min-width: 50px;
+    padding: 5vh 3vw;
     font-family: monospace;
     border-bottom: 1px solid #111111;
     color: white;
-    font-size: 1.4vh;
+    font-size: calc(.7vw + .7vh);
     z-index: inherit;
 }
 
 .Selectable:hover {
     background-color: #555555;
-}
-
-.Selectable:focus {
-    background-color: #222222;
 }
 
 .Selectable:active {
@@ -77,11 +72,10 @@ html, body {
 }
 
 .Color {
-    text-align: center;
-    display: inline-block;
-    width: 100%;
-    height: 100%;
+    flex: 1;
+    padding: 3vh 2vw;
     font-size: 1.4vw;
+    min-height: 10px;
 }
 
 .Color:hover {
@@ -99,7 +93,7 @@ html, body {
 canvas {
     max-width: 94vw;
     max-height: 94vh;
-    background-color: white;
+    background-color: #666666;
     height: 94vh;
     width: 94vw;
 }
@@ -113,13 +107,76 @@ canvas {
 
 #CalcButton {
     margin-top: 4vh;
-    text-align: center;
     padding: 2vh 2vw;
     border: none;
-    background-color: darkcyan;
+    background-color: green;
 }
 
 #CalcButton:hover {
-    background-color: cyan;
+    background-color: lightgreen;
 }
 
+
+#Black {
+    background-color: black;
+}
+
+#White {
+    background-color: white;
+}
+
+#Blue {
+    background-color: blue;
+}
+
+#Red {
+    background-color: red;
+}
+
+#Green {
+    background-color: green;
+}
+
+#Yellow {
+    background-color: yellow;
+}
+
+#Indigo {
+    background-color: indigo;
+}
+
+#Violet {
+    background-color: violet;
+}
+
+#Black:hover {
+    background-color: #222222;
+}
+
+#White:hover {
+    background-color: #dddddd;
+}
+
+#Blue:hover {
+    background-color: rgb(69, 69, 158);
+}
+
+#Red:hover {
+    background-color: rgb(161, 59, 59);
+}
+
+#Green:hover {
+    background-color: rgb(35, 100, 35);
+}
+
+#Yellow:hover {
+    background-color: rgb(141, 141, 19);
+}
+
+#Indigo:hover {
+    background-color: rgb(75, 30, 107);
+}
+
+#Violet:hover {
+    background-color: rgb(145, 88, 145);
+}

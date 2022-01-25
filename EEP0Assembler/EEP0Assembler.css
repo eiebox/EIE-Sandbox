@@ -60,7 +60,6 @@ textarea:focus {
 .TopNavBar a{
     text-align: center;
     display: flex;
-    background-color: #444444;
     color: white;
     font-family: monospace;
     font-size: clamp(10px, 1vw, 40px);
@@ -75,10 +74,8 @@ header {
     width: 100vw;
     height: 6vh;
     background-color: #444444;
-    display: flex;
     justify-content: flex-start;
     align-items: center;
-    border-bottom: 1px solid #111111;
 }
 
 html, body {
