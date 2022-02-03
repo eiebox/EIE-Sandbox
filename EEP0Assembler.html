@@ -1,0 +1,37 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="../EEP0Assembler/EEP0Assembler.css">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EEP0 - Assembler</title>
+</head>
+<body style="background-color: #333333;">
+    <header class="PageHeader">
+        <div class="TopNavBar">
+            <a href="../index.html"><img src="../StaticContent/Logo.svg" id="Logo"/></a>
+            <a href="../EEP0Assembler/EEP0Assembler.html">[EEP0-ASSEMBLER]</a>
+            <a href="../FourierTransform/Fourier.html">[FOURIER-TRANSFORM]</a>
+        </div>
+    </header>
+    <div class="AssemblerControls">
+        <h1 style="color: white;">[EEP0 - ASSEMBLER]</h1>
+        
+        <div class="toggle"> 
+            <h1>BIN</h1>           
+            <input class="apple-switch" type="checkbox" onclick="switchModes();"> 
+            <h1>HEX</h1>           
+        </div>
+        
+    </div>
+    <div class="TextAreas">
+        <textarea id="AssemblyInput" rows="10">MOV R0, R1</textarea>    
+        <textarea readonly id="AssemblyOutput" rows="10">0000000100000000</textarea>   
+    </div> 
+    <button type="button" onclick="runAssembler();">Run Assembler</button>
+    <script src="EEP0Assembler.js"></script>
+</body>
+</html>
