@@ -44,7 +44,7 @@ function OpCodeResolver(Line){
                 }
                 else if (Line[2][0] == "#"){
                     Line[2] = Line[2].replace("#",'');
-                    if(Line[2] > 0 && Line[2] < 255){
+                    if(Line[2] >= 0 && Line[2] <= 255){
                         Line[2] = Number(Line[2]);
                         Line[2] = Line[2].toString(2);
                         for(Line[2]; Line[2].length < 10; Line[2] = "0".concat(Line[2]));
@@ -71,7 +71,7 @@ function OpCodeResolver(Line){
         else{
             if(Line[1][0] == "#"){
                 Line[1] = Line[1].replace("#",'');
-                if(Line[1] >= 0 && Line[1] < 255){
+                if(Line[1] >= 0 && Line[1] <= 255){
                     Line[1] = Number(Line[1]);
                     Line[1] = Line[1].toString(2);
                     for(Line[1]; Line[1].length < 8; Line[1] = "0".concat(Line[1]));
