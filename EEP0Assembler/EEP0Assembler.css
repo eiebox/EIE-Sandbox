@@ -48,6 +48,29 @@ textarea:focus {
     border-color: #349;
 }
 
+.AssemblerControls {
+    justify-content: flex-start;
+    align-items: center;
+    display: flex;
+    flex-direction: row;
+}
+
+.AssemblerControls h1 {
+    font-family: monospace;
+    font-weight: lighter;
+    font-size: 2vh;
+    color: white;
+    margin: 1vh;
+}
+
+.AssemblerControls .toggle {
+    margin-left: auto;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+
 .TopNavBar {
     background-color: #444444;
     overflow: hidden;
@@ -89,3 +112,44 @@ html, body {
     height: calc(1vw + 1vh);
     background-color: #444444;
 }
+
+/* Css for nice looking toggle switch, stolen from https://codeburst.io/pure-css3-input-as-the-ios-checkbox-8b6347d5cefb
+start
+*/
+
+input.apple-switch {
+  position: relative;
+  -webkit-appearance: none;
+  outline: none;
+  width: 50px;
+  height: 30px;
+  background-color: #fff;
+  border: 1px solid #D9DADC;
+  border-radius: 50px;
+  box-shadow: inset -20px 0 0 0 #fff;
+  
+}
+
+input.apple-switch:after {
+  content: "";
+  position: absolute;
+  top: 1px;
+  left: 1px;
+  background: transparent;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  box-shadow: 2px 4px 6px rgba(0,0,0,0.2);
+}
+
+input.apple-switch:checked {
+  box-shadow: inset 20px 0 0 0 #4ed164;
+  border-color: #4ed164;
+}
+
+input.apple-switch:checked:after {
+  left: 20px;
+  box-shadow: -2px 4px 3px rgba(0,0,0,0.05);
+}
+
+/* end */

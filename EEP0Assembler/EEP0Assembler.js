@@ -23,7 +23,8 @@ var ConversionDictRegister = {
 }
 
 var Message = "";
-var CurrentLine = ""
+var CurrentLine = "";
+var outputEncoding = 2;
 
 function OpCodeResolver(Line){
     Line = Line.replace(",","");
@@ -87,6 +88,12 @@ function OpCodeResolver(Line){
     else{
         throw("Incorrect opcode");
     }
+    if(outputEncoding == 16){
+        // convert binary number back to int 
+        // convert int to hex
+        // make it uppercase and add leading 0s 
+        return parseInt(Line.join(''), 2).toString(16).toUpperCase().padStart(4, '0');
+    }
     return Line.join('');
 }
 
@@ -107,4 +114,11 @@ function runAssembler(){
         }
     }
     document.getElementById("AssemblyOutput").innerHTML = Message;
+}
+
+//function that is run when toggle is clicked
+
+function switchModes(){
+    outputEncoding = (outputEncoding == 2) ? 16 : 2;
+    runAssembler();
 }

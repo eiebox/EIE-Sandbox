@@ -17,7 +17,16 @@
             <a href="../FourierTransform/Fourier.html">[FOURIER-TRANSFORM]</a>
         </div>
     </header>
-    <h1 style="color: white;">[EEP0 - ASSEMBLER]</h1>
+    <div class="AssemblerControls">
+        <h1 style="color: white;">[EEP0 - ASSEMBLER]</h1>
+        
+        <div class="toggle"> 
+            <h1>BIN</h1>           
+            <input class="apple-switch" type="checkbox" onclick="switchModes();"> 
+            <h1>HEX</h1>           
+        </div>
+        
+    </div>
     <div class="TextAreas">
         <textarea id="AssemblyInput" rows="10">MOV R0, R1</textarea>    
         <textarea readonly id="AssemblyOutput" rows="10">0000000100000000</textarea>   
