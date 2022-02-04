@@ -44,7 +44,7 @@ function OpCodeResolver(Line){
                 }
                 else if (Line[2][0] == "#"){
                     Line[2] = Line[2].replace("#",'');
-                    if(Line[2] > 0 && Line[2] < 255){
+                    if(Line[2] >= 0 && Line[2] <= 255){
                         Line[2] = Number(Line[2]);
                         Line[2] = Line[2].toString(2);
                         for(Line[2]; Line[2].length < 10; Line[2] = "0".concat(Line[2]));
@@ -71,7 +71,7 @@ function OpCodeResolver(Line){
         else{
             if(Line[1][0] == "#"){
                 Line[1] = Line[1].replace("#",'');
-                if(Line[1] >= 0 && Line[1] < 255){
+                if(Line[1] >= 0 && Line[1] <= 255){
                     Line[1] = Number(Line[1]);
                     Line[1] = Line[1].toString(2);
                     for(Line[1]; Line[1].length < 8; Line[1] = "0".concat(Line[1]));
@@ -101,14 +101,22 @@ function OpCodeResolver(Line){
 function runAssembler(){
     Message = "";
     document.getElementById("AssemblyOutput").style.color = "white";
-    var InputText = document.getElementById("AssemblyInput");
-    InputText = InputText.value.split("\n");
+    var InputText = document.getElementById("AssemblyInput").value;
+    InputText = InputText.split("\n");
     for(var i in InputText){
         if(InputText[i] != ""){
             try{
                 Message += OpCodeResolver(InputText[i]) + "\n";
             }catch(err){
                 Message += err + " on line: " + (Number(i)+1) + "\n";
+
+                // find selection
+                document.getElementById("AssemblyInput").focus();
+                var errorPos = document.getElementById("AssemblyInput").value.indexOf(InputText[i]);
+                var errorLen = InputText[i].length;
+                // select error
+                document.getElementById("AssemblyInput").setSelectionRange(errorPos, errorPos + errorLen);
+
                 document.getElementById("AssemblyOutput").style.color = "red";
             }
         }
