@@ -41,6 +41,7 @@ textarea {
     color: white;
     font-size: calc(1.5vh + .5vw);
     font-family: monospace;
+
 }
 
 textarea:focus {
@@ -153,3 +154,18 @@ input.apple-switch:checked:after {
 }
 
 /* end */
+
+/* selection stuff to highlight errors */
+
+.TextAreas ::-moz-selection {
+    text-decoration: underline wavy red;
+}
+
+.TextAreas  ::selection {
+    text-decoration: underline wavy red;
+}
+
+.TextAreas {
+    /* for error detection */
+    text-decoration: underline wavy transparent;
+}

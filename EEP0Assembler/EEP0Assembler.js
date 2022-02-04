@@ -101,14 +101,22 @@ function OpCodeResolver(Line){
 function runAssembler(){
     Message = "";
     document.getElementById("AssemblyOutput").style.color = "white";
-    var InputText = document.getElementById("AssemblyInput");
-    InputText = InputText.value.split("\n");
+    var InputText = document.getElementById("AssemblyInput").value;
+    InputText = InputText.split("\n");
     for(var i in InputText){
         if(InputText[i] != ""){
             try{
                 Message += OpCodeResolver(InputText[i]) + "\n";
             }catch(err){
                 Message += err + " on line: " + (Number(i)+1) + "\n";
+
+                // find selection
+                document.getElementById("AssemblyInput").focus();
+                var errorPos = document.getElementById("AssemblyInput").value.indexOf(InputText[i]);
+                var errorLen = InputText[i].length;
+                // select error
+                document.getElementById("AssemblyInput").setSelectionRange(errorPos, errorPos + errorLen);
+
                 document.getElementById("AssemblyOutput").style.color = "red";
             }
         }
