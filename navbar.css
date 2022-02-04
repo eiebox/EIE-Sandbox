@@ -1,3 +1,19 @@
+header {
+    width: 100vw;
+    height: 6vh;
+    background-color: #444444;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+html, body {
+    margin: 0%;
+    padding: 0%;
+    min-height: 100%;
+    min-width: 100%;
+    overflow: hidden;
+}
+
 /* Navigation Bar */
 
 .TopNavBar {
@@ -19,22 +35,6 @@
 
 .TopNavBar a:hover #Logo, .TopNavBar a:hover, .dropdown:hover .dropbtn, .dropbtn:focus {
    background-color: #363636;
-}
-
-header {
-    width: 100vw;
-    height: 6vh;
-    background-color: #444444;
-    justify-content: flex-start;
-    align-items: center;
-}
-
-html, body {
-    margin: 0%;
-    padding: 0%;
-    min-height: 100%;
-    min-width: 100%;
-    overflow: hidden;
 }
 
 #Logo {

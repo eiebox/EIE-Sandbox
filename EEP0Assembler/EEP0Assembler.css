@@ -13,7 +13,7 @@ h1{
     margin-left: 1vh;
 }
 
-button {
+.assemblerbtn {
     background-color: black;
     border: 2px black;
     position: absolute;
@@ -26,7 +26,7 @@ button {
     width: 100%;
 }
 
-button:active{
+.assemblerbtn:active{
     background-color: #272727;
 }
 

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <link rel="stylesheet" href="Fourier.css"> 
+    <link rel="stylesheet" href="EEP1Assembler.css"> 
 <!-- START NAVBAR STYLING-->
     <link rel="stylesheet" href="../navbar.css">    
     <!-- Style for the dropdown thing-->
@@ -47,31 +47,23 @@
             }
         }
     </script>
-<!-- END OF NAVBAR STUFF -->
 
-    <span class="MainContent">
-        <div id="SideBar">
-            <div class="Selectable" id="SETButton" onclick="SETButtonPress();">SET</div>
-            <div class="ColorRow">
-                <span class="Color" id="Black" onclick=""></span>
-                <span class="Color" id="White" onclick=""></span>
-            </div>
-            <div class="ColorRow">
-                <span class="Color" id="Red" onclick=""></span>
-                <span class="Color" id="Blue" onclick=""></span>
-            </div>
-            <div class="ColorRow">
-                <span class="Color" id="Green" onclick=""></span>
-                <span class="Color" id="Yellow" onclick=""></span>
-            </div>
-            <div class="ColorRow">
-                <span class="Color" id="Violet" onclick=""></span>
-                <span class="Color" id="Indigo" onclick=""></span>
-            </div>
-            <button id="CalcButton"> Calc </button>
+<!-- END OF NAVBAR STUFF -->
+    <div class="AssemblerControls">
+        <h1 style="color: white;">[EEP0 - ASSEMBLER]</h1>
+        
+        <div class="toggle"> 
+            <h1>BIN</h1>           
+            <input class="apple-switch" type="checkbox" onclick="switchModes();"> 
+            <h1>HEX</h1>           
         </div>
-        <canvas id="FourierCanvas" onclick=""></canvas>
-    </span>
-    <script src="Fourier.js"></script>
+        
+    </div>
+    <div class="TextAreas">
+        <textarea id="AssemblyInput" rows="10">MOV R0, R1</textarea>    
+        <textarea readonly id="AssemblyOutput" rows="10">0000000100000000</textarea>   
+    </div> 
+    <button type="button" class="assemblerbtn" onclick="runAssembler();">Run Assembler</button>
+    <script src="EEP1Assembler.js"></script>
 </body>
 </html>
