@@ -1,22 +1,54 @@
-
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <link rel="stylesheet" href="../EEP0Assembler/EEP0Assembler.css">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link rel="stylesheet" href="EEP0Assembler.css"> 
+<!-- START NAVBAR STYLING-->
+    <link rel="stylesheet" href="../navbar.css">    
+    <!-- Style for the dropdown thing-->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<!-- END NAVBAR STYLING-->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EEP0 - Assembler</title>
+    <title>Homepage</title>
 </head>
+<!-- START OF NAVBAR STUFF -->
 <body style="background-color: #333333;">
     <header class="PageHeader">
         <div class="TopNavBar">
             <a href="../index.html"><img src="../StaticContent/Logo.svg" id="Logo"/></a>
-            <a href="../EEP0Assembler/EEP0Assembler.html">[EEP0-ASSEMBLER]</a>
+            <div class="dropdown">
+                <button class="dropbtn" onclick="dropDownFunc()">
+                    <i class="fa fa-caret-right"></i>
+                    [ASSEMBLERS]
+                </button>
+                <div class ="dropdown-content" id="myDropdown">
+                    <a href="../EEP1Assembler/EEP1Assembler.html">[EEP1-ASSEMBLER]</a>
+                    <a href="../EEP0Assembler/EEP0Assembler.html">[EEP0-ASSEMBLER]</a>                    
+                </div>
+            </div>
             <a href="../FourierTransform/Fourier.html">[FOURIER-TRANSFORM]</a>
         </div>
     </header>
+    <script>
+        /* When the user clicks on the button, 
+        toggle between hiding and showing the dropdown content */
+        function dropDownFunc() {
+            document.getElementById("myDropdown").classList.toggle("show");
+        }
+        
+        // Close the dropdown if the user clicks outside of it
+        window.onclick = function(e) {
+            if (!e.target.matches('.dropbtn')) {
+            var myDropdown = document.getElementById("myDropdown");
+            if (myDropdown.classList.contains('show')) {
+                myDropdown.classList.remove('show');
+            }
+            }
+        }
+    </script>
+
+<!-- END OF NAVBAR STUFF -->
     <div class="AssemblerControls">
         <h1 style="color: white;">[EEP0 - ASSEMBLER]</h1>
         
@@ -31,7 +63,7 @@
         <textarea class="inputTextArea" id="AssemblyInput" rows="10" spellcheck="false">MOV R0, R1</textarea>    
         <textarea readonly id="AssemblyOutput" rows="10" spellcheck="false">0000000100000000</textarea>   
     </div> 
-    <button type="button" onclick="runAssembler();">Run Assembler</button>
+    <button type="button" class="assemblerbtn" onclick="runAssembler();">Run Assembler</button>
     <script src="EEP0Assembler.js"></script>
 </body>
 </html>

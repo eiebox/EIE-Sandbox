@@ -13,7 +13,7 @@ h1{
     margin-left: 1vh;
 }
 
-button {
+.assemblerbtn {
     background-color: black;
     border: 2px black;
     position: absolute;
@@ -26,7 +26,7 @@ button {
     width: 100%;
 }
 
-button:active{
+.assemblerbtn:active{
     background-color: #272727;
 }
 
@@ -69,49 +69,6 @@ textarea:focus {
     display: flex;
     flex-direction: row;
     align-items: center;
-}
-
-
-.TopNavBar {
-    background-color: #444444;
-    overflow: hidden;
-    justify-content: flex-start;
-    align-items: center;
-    display: flex;
-    max-height: 6vh;
-}
-
-.TopNavBar a{
-    text-align: center;
-    display: flex;
-    color: white;
-    font-family: monospace;
-    font-size: clamp(10px, 1vw, 40px);
-    padding: 1vw;
-}
-
-.TopNavBar a:hover #Logo, .TopNavBar a:hover{
-   background-color: #363636;
-}
-
-header {
-    width: 100vw;
-    height: 6vh;
-    background-color: #444444;
-    justify-content: flex-start;
-    align-items: center;
-}
-
-html, body {
-    margin: 0%;
-    padding: 0%;
-    min-height: 100%;
-    min-width: 100%;
-}
-
-#Logo {
-    height: calc(1vw + 1vh);
-    background-color: #444444;
 }
 
 /* Css for nice looking toggle switch, stolen from https://codeburst.io/pure-css3-input-as-the-ios-checkbox-8b6347d5cefb
