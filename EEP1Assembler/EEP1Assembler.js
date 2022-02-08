@@ -19,34 +19,105 @@ Convert registers by chopping R off and converting number to binary
 
 */
 
-//maps opcode to I[15:8], for JMP instrunction I[13:12] are don't cares so they are set to 0
-const OPCJMP = {
-    "JMP": 0xC0,
-    "JNE": 0xC2,
-    "JEQ": 0xC3,
-    "JCS": 0xC4,
-    "JCC": 0xC5,
-    "JMI": 0xC6,
-    "JPL": 0xC7,
-    "JGE": 0xC8,
-    "JLT": 0xC9,
-    "JGT": 0xCA,
-    "JLE": 0xCB,
-    "JHI": 0xCC,
-    "JLS": 0xCD,
-    "JSR": 0xCE,
-    "RET": 0xCF,
+const REGISTER_COUNT = 8;
+const REGISTER_BITS = 3;
+
+//maps opcode to I, for JMP instrunction I[13:12] are don't cares so they are set to 0
+const OPCODES = {
+// JMP
+    "JMP": [0xC0, '#Imm8'],
+    "JNE": [0xC2, '#Imm8'],
+    "JEQ": [0xC3, '#Imm8'],
+    "JCS": [0xC4, '#Imm8'],
+    "JCC": [0xC5, '#Imm8'],
+    "JMI": [0xC6, '#Imm8'],
+    "JPL": [0xC7, '#Imm8'],
+    "JGE": [0xC8, '#Imm8'],
+    "JLT": [0xC9, '#Imm8'],
+    "JGT": [0xCA, '#Imm8'],
+    "JLE": [0xCB, '#Imm8'],
+    "JHI": [0xCC, '#Imm8'],
+    "JLS": [0xCD, '#Imm8'],
+    "JSR": [0xCE, '#Imm8'],
+    "RET": [0xCF, '#Imm8'],
+// ALU
+    "MOV": [0x0, "Ra", "Op"],
+    "ADD": [0x1, 'Ra', 'Op'],
+    "SUB": [0x2, 'Ra', 'Op'],
+    "ADC": [0x3, 'Ra', 'Op'],
+    "SBC": [0x4, 'Ra', 'Op'],
+    "AND": [0x5, 'Ra', 'Op'],
+    "XOR": [0x6, 'Ra', 'Op'],    
+    "LSL": [0x7, 'Ra', "0", 'Rb', '#Imms5'],
+// LDR / STR
+    "LDR": [0b1000, 'Ra', 'Op'],
+    "LDR": [0b1010, 'Ra', 'Op'],
 }
 
-const OPCALU = {
-    "MOV":,
-    "ADD":,
-    "SUB":,
-    "ADC":,
-    "SBC":,
-    "AND":,
-    "XOR":,
-    "LSL":,
+/* Define functions to interpret different parts of the instructions */
+
+// function Register takes in input register string in form "Rnum" and return corresponding binary representation
+function Register(token){    
+    // Check it is in correct formst
+    if(token[0] == "R"){
+        let regNum = Number(token.replace("R",""));
+        // check register is correct size
+        if (regNum < REGISTER_COUNT || regNum >= 0){
+            return regNum.toString(2).padStart(REGISTER_BITS, "0");
+        } else {
+            throw("Register value out of bounds");
+        }
+    } else {
+        throw("Register format incorrect");
+    }
+}
+
+// function Immediates convert #Imms5 and #Imm8 to binary representation, 
+function Immediate(token, format){
+    if (token[0] == "#"){
+        if (format == 5) {
+            let immOut = Number(token.replace("#",""));
+            if (immOut <= 15 && immOut >= 0) {
+                // poisitive number, no need to convert to twos complement
+                return immOut.toString(2).padStart(format, '0');
+            } else if (immOut >= -16 && immOut < 0) {
+                // ~ flips the bits of the number, therefore number is made positive, bits are flipped, number becomes negative therefore it is made positive again, then 1 is added
+                immOut = Math.abs(immOut);
+                return (Math.abs(~immOut) + 1).toString(2).padStart(format, '1');
+            } else {
+                throw("Immediate out of range");
+            }
+        } else if (format == 8) {
+            let immOut = Number(token.replace("#",""));
+            if (immOut >= 0 || immOut <= 255) {
+                return immOut.toString(2).padStart(format, '0');
+            } else {
+                throw("Immediate out of range");
+            }   
+        } else {
+            throw("Immediate format incorrect");
+        }
+    } else {
+        throw("Missing # on Immediate");
+    }
+}
+
+//function Op convert token
+function Operand(token){
+    if (token.length == 1) {
+        if (token[0][0] == "#") {
+            // Imm8
+            return "1" + Immediate(token[0], 8);
+        } else if (token[0][0] == "R") {
+            // Register 
+            return "0" + Register(token[0]).padEnd(8,"0"); 
+        } else {
+            throw("Invalid token")
+        }
+    } else if (token.length == 2) {
+        // register and Imms5
+        return "0" + Register(token[0]) + Immediate(token[1], 5);
+    }
 }
 
 var Message = "";
@@ -56,72 +127,46 @@ var outputEncoding = 2;
 function OpCodeResolver(Line){
     Line = Line.replace(",","");
     Line = Line.trim();
-    Line = Line.split(" ");
-    if (ConversionDictOpcode[Line[0]] != undefined){
-        Line[0] = ConversionDictOpcode[Line[0]];
-        if (Line.length != 3){
-            throw("Incorrect Operand Size")
-        }
-        else{
-            if(ConversionDictRegister[Line[1]] != undefined){
-                Line[1] = ConversionDictRegister[Line[1]];
-                if(ConversionDictRegister[Line[2]] != undefined){
-                    Line[2] = ConversionDictRegister[Line[2]] + "00000000";
-                    Line[0] = Line[0] + "0";
-                }
-                else if (Line[2][0] == "#"){
-                    Line[2] = Line[2].replace("#",'');
-                    if(Line[2] >= 0 && Line[2] <= 255){
-                        Line[2] = Number(Line[2]);
-                        Line[2] = Line[2].toString(2);
-                        for(Line[2]; Line[2].length < 10; Line[2] = "0".concat(Line[2]));
-                        Line[1] = "1".concat(Line[1]);
-                    }
-                    else{
-                        throw("Immediate Operand Too large or Small")
-                    }
-                }
-                else{
-                    throw("Invalid Input Value")
-                }
-            }else{
-                throw("Register Error (Position or Immediate Operand)")
+    let tokens = Line.split(" ");
+    let output = "";
+    console.log(tokens);
+    console.log(Object.keys(OPCODES));
+    if (Object.keys(OPCODES).includes(tokens[0])){
+        let instruction = OPCODES[tokens[0]];
+        console.log(instruction);
+        // append opcode conversion to output
+        output += instruction[0].toString(2).padStart(4, '0');
+
+        for (let i = 1; i < instruction.length; i++){
+            if (instruction[i] == "#Imm8"){
+                output += Immediate(tokens[i], 8);
+            } else if (instruction[i] == "Op") {
+                let operand = tokens.filter(function(value, index, arr){
+                    return index > 1;
+                });
+                output += Operand(operand);
+            } else if (instruction[i] == "Ra" || instruction[i] == "Rb") {
+                output += Register(tokens[i]);
+            } else if (instruction[i] == "#Imms5") {
+                output += Immediate(tokens[i], 5);
+            } else if (instruction[i] == "1") {
+                output += "1";
+            } else if (instruction[i] == "0") {
+                output += "0";
             }
+            console.log(output + " " + i);
         }
-    }
-    else if(ConversionDictOpcodeJMP[Line[0]] != undefined){
-        Line[0] = ConversionDictOpcodeJMP[Line[0]];
-        Line[0] = Line[0] + "0000";
-        if (Line.length != 2){
-            throw("Incorrect Operand Size")
+
+        if(outputEncoding == 16){
+            // convert binary number back to int 
+            // convert int to hex
+            // make it uppercase and add leading 0s 
+            return parseInt(output, 2).toString(16).toUpperCase().padStart(4, '0');
         }
-        else{
-            if(Line[1][0] == "#"){
-                Line[1] = Line[1].replace("#",'');
-                if(Line[1] >= 0 && Line[1] <= 255){
-                    Line[1] = Number(Line[1]);
-                    Line[1] = Line[1].toString(2);
-                    for(Line[1]; Line[1].length < 8; Line[1] = "0".concat(Line[1]));
-                }
-                else{
-                    throw("Immediate Operand Too large or small")
-                }
-            }
-            else{
-                throw("Incorrect operand")
-            }
-        }
+        return output;
+    } else {
+        throw("Incorrect OPCODE");
     }
-    else{
-        throw("Incorrect opcode");
-    }
-    if(outputEncoding == 16){
-        // convert binary number back to int 
-        // convert int to hex
-        // make it uppercase and add leading 0s 
-        return parseInt(Line.join(''), 2).toString(16).toUpperCase().padStart(4, '0');
-    }
-    return Line.join('');
 }
 
 
