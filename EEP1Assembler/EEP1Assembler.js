@@ -51,7 +51,7 @@ const OPCODES = {
     "LSL": [0x7, 'Ra', "0", 'Rb', '#Imms5'],
 // LDR / STR
     "LDR": [0b1000, 'Ra', 'Op'],
-    "LDR": [0b1010, 'Ra', 'Op'],
+    "STR": [0b1010, 'Ra', 'Op'],
 }
 
 /* Define functions to interpret different parts of the instructions */
