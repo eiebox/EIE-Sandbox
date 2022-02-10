@@ -1,19 +1,18 @@
 
 .TextAreas{
     width: 100%;
-    height: 80vh;
+    height: 68vh;
     display: flex;
 }
 
 h1{
     font-family: monospace;
     font-weight: lighter;
-    font-size: 2vh;
+    font-size: 2em;
     color: white;
-    margin-left: 1vh;
 }
 
-.assemblerbtn {
+button {
     background-color: black;
     border: 2px black;
     position: absolute;
@@ -26,22 +25,17 @@ h1{
     width: 100%;
 }
 
-.assemblerbtn:active{
-    background-color: #272727;
-}
-
-
-textarea {
+textarea, .textArea {
     resize: none;
     width: 100%;
     height: 100%;
     border: 1px solid black;
     margin: .15vw;
+    padding: 2px;
     background-color: #222222;
     color: white;
-    font-size: calc(1.5vh + .5vw);
+    /* font-size: calc(1.5vh + .5vw); */
     font-family: monospace;
-
 }
 
 textarea:focus {
@@ -59,9 +53,9 @@ textarea:focus {
 .AssemblerControls h1 {
     font-family: monospace;
     font-weight: lighter;
-    font-size: 2vh;
+    /* font-size: 2vh; */
     color: white;
-    margin: 1vh;
+    margin: 10px;
 }
 
 .AssemblerControls .toggle {
@@ -69,60 +63,126 @@ textarea:focus {
     display: flex;
     flex-direction: row;
     align-items: center;
+    margin-right: 10px;
 }
 
-/* Css for nice looking toggle switch, stolen from https://codeburst.io/pure-css3-input-as-the-ios-checkbox-8b6347d5cefb
-start
-*/
 
-input.apple-switch {
-  position: relative;
-  -webkit-appearance: none;
-  outline: none;
-  width: 50px;
-  height: 30px;
-  background-color: #fff;
-  border: 1px solid #D9DADC;
-  border-radius: 50px;
-  box-shadow: inset -20px 0 0 0 #fff;
-  
+.TopNavBar {
+    background-color: #444444;
+    overflow: hidden;
+    justify-content: flex-start;
+    align-items: center;
+    display: flex;
+    max-height: 6vh;
+    min-height: 30px
 }
 
-input.apple-switch:after {
-  content: "";
-  position: absolute;
-  top: 1px;
-  left: 1px;
-  background: transparent;
-  width: 26px;
-  height: 26px;
-  border-radius: 50%;
-  box-shadow: 2px 4px 6px rgba(0,0,0,0.2);
+.TopNavBar a{
+    text-align: center;
+    display: flex;
+    color: white;
+    font-family: monospace;
+    /* font-size: clamp(10px, 1vw, 40px); */
+    padding: 1vw;
 }
 
-input.apple-switch:checked {
-  box-shadow: inset 20px 0 0 0 #4ed164;
-  border-color: #4ed164;
+.TopNavBar a:hover #Logo, .TopNavBar a:hover{
+   background-color: #363636;
 }
 
-input.apple-switch:checked:after {
-  left: 20px;
-  box-shadow: -2px 4px 3px rgba(0,0,0,0.05);
+header {
+    width: 100vw;
+    height: 6vh;
+    background-color: #444444;
+    justify-content: flex-start;
+    align-items: center;
 }
 
-/* end */
-
-/* selection stuff to highlight errors */
-
-.TextAreas ::-moz-selection {
-    text-decoration: underline wavy red;
+html, body {
+    margin: 0%;
+    padding: 0%;
+    min-height: 100%;
+    min-width: 100%;
+    background-color: #222222;
 }
 
-.TextAreas  ::selection {
-    text-decoration: underline wavy red;
+#Logo {
+    height: calc(1vw + 1vh);
+    background-color: #444444;
+    margin: 10px;
 }
 
-.TextAreas {
-    /* for error detection */
-    text-decoration: underline wavy transparent;
+.switchLabel {
+    font-family: monospace;
+    font-weight: lighter;
+    /* font-size: 2vh; */
+    color: white;
+    margin: 1vmin;
+}
+
+.button {
+    cursor: pointer;
+}
+
+#toggleOutputMode > div > span#switchBody {
+    color: green;
+    transition: all ease 0.1s;
+}
+
+#switchBody {
+    /* border: 2px solid red; */
+    background-color: grey;
+    display: inline-block;
+    border-radius: 5px;
+    width: 5vw
+}
+
+.switchBody {
+    position: relative;
+    display: inline-block;
+    width: 40px;
+}
+
+.switchBody input {
+    opacity: 0;
+    width: 10px;
+    height: 0;
+}
+
+.slider {
+    width: 40px;
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #444444;
+    transition: .4s;
+}
+
+input:checked + .slider {
+    background-color: #10c0d0;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 10px;
+    width: 10px;
+    bottom: 5px;
+    /* background-color: white; */
+    transition: .4s; 
+}
+
+#tc {
+    position: absolute;
+    top: -8px;
+    left: -5px;
+    transition: 0.4s;
+}
+
+input:checked + .slider >#tc {
+    transform: translateX(25px);
+    transition: 0.4s
 }
