@@ -125,7 +125,7 @@ var CurrentLine = "";
 var outputEncoding = 2;
 
 function OpCodeResolver(Line){
-    Line = Line.replace(",","");
+    Line = Line.replace(/,/g,"");
     Line = Line.trim();
     let tokens = Line.split(" ");
     let output = "";
