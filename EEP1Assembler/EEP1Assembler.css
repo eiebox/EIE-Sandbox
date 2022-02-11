@@ -1,7 +1,7 @@
 /* For devices with width of 480px and less, like phones */
 @media only screen and (max-width: 480px) {
     .TextAreas{
-        height: calc(91.5vh - 6.8em - 85px);
+        height: calc(91.5vh - 6.8em - 95px);
     }
     .h1{
         font-size: 2rem;
