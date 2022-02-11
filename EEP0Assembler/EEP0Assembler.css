@@ -1,14 +1,265 @@
+/* For devices with width of 480px and less, like phones */
+@media only screen and (max-width: 480px) {
+    .TextAreas{
+        height: calc(91.5vh - 6.8em - 45px);
+    }
+    .h1{
+        font-size: 2rem;
+    }
+    .assemblerbtn {
+        margin-top: 1em;
+        padding-top: 3vh;
+        padding-bottom: 3vh;
+        font-size: 2em;
+        width: 100%;
+    }
+    textarea, .textArea {
+        width: 100%;
+        height: 100%;
+        margin: .15em;
+        padding: 5px;
+        font-size: 1.5em;
+    }
+    .AssemblerControls h1 {
+        font-size: 1rem;
+        margin: .5rem;
+    }
+    .AssemblerControls .toggle {
+        margin-right: 10px;
+    }
+    .switchLabel {
+        margin: 1vmin;
+    }
+    .switchBody {
+        width: 40px;
+    }
+    .switchBody input {
+        opacity: 0;
+        width: 10px;
+        height: 0;
+    }
+    .slider {
+        width: 40px;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        transition: .4s;
+    }
+    .slider:before {
+        height: 10px;
+        width: 10px;
+        bottom: 5px;
+        transition: .4s; 
+    }
+    #tc {
+        top: -8px;
+        left: -5px;
+        transition: 0.4s;
+    }
+    input:checked + .slider >#tc {
+        transform: translateX(25px);
+        transition: 0.4s
+    }
+}
+/* For devices with width between 481px and 768px, like larger phones and portrait tablets */
+@media only screen and (min-width: 481px) {
+    .TextAreas{
+        height: calc(91.5vh - 6.8em);
+    }
+    .h1{
+        font-size: 2rem;
+    }
+    .assemblerbtn {
+        margin-top: 1em;
+        padding-top: 3vh;
+        padding-bottom: 3vh;
+        font-size: 2em;
+        width: 100%;
+    }
+    textarea, .textArea {
+        width: 100%;
+        height: 100%;
+        margin: .15em;
+        padding: 5px;
+        font-size: 1.5em;
+    }
+    .AssemblerControls h1 {
+        font-size: 1rem;
+        margin: .5rem;
+    }
+    .AssemblerControls .toggle {
+        margin-right: 10px;
+    }
+    .switchLabel {
+        margin: 1vmin;
+    }
+    .switchBody {
+        width: 40px;
+    }
+    .switchBody input {
+        opacity: 0;
+        width: 10px;
+        height: 0;
+    }
+    .slider {
+        width: 40px;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        transition: .4s;
+    }
+    .slider:before {
+        height: 10px;
+        width: 10px;
+        bottom: 5px;
+        transition: .4s; 
+    }
+    #tc {
+        top: -8px;
+        left: -5px;
+        transition: 0.4s;
+    }
+    input:checked + .slider >#tc {
+        transform: translateX(25px);
+        transition: 0.4s
+    }
+}
+/* For devices with width between 769px and 1279px, like landscape tablets and laptops */
+@media only screen and (min-width: 769px) {
+    .TextAreas{
+        height: calc(91.5vh - 6.8em);
+    }
+    .h1{
+        font-size: 2rem;
+    }
+    .assemblerbtn {
+        margin-top: 1em;
+        padding-top: 3vh;
+        padding-bottom: 3vh;
+        width: 100%;
+    }
+    textarea, .textArea {
+        width: 100%;
+        height: 100%;
+        margin: .15em;
+        padding: 5px;
+        font-size: 1.8em;
+    }
+    .AssemblerControls h1 {
+        font-size: 1rem;
+        margin: .5rem;
+    }
+    .AssemblerControls .toggle {
+        margin-right: 10px;
+    }
+    .switchLabel {
+        margin: 1vmin;
+    }
+    .switchBody {
+        width: 40px;
+    }
+    .switchBody input {
+        opacity: 0;
+        width: 10px;
+        height: 0;
+    }
+    .slider {
+        width: 40px;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        transition: .4s;
+    }
+    .slider:before {
+        height: 10px;
+        width: 10px;
+        bottom: 5px;
+        transition: .4s; 
+    }
+    #tc {
+        top: -8px;
+        left: -5px;
+        transition: 0.4s;
+    }
+    input:checked + .slider >#tc {
+        transform: translateX(25px);
+        transition: 0.4s
+    }
+}
+/* For devices with width of 1280px and more, like desktop computers */
+@media only screen and (min-width: 1280px) {
+    .TextAreas{
+        height: calc(91.5vh - 6.8em);
+    }
+    .h1{
+        font-size: 2rem;
+    }
+    .assemblerbtn {
+        margin-top: .8em;
+        padding-top: 3vh;
+        padding-bottom: 3vh;
+        width: 100%;
+    }
+    textarea, .textArea {
+        width: 100%;
+        height: 100%;
+        margin: .15em;
+        padding: 5px;
+        font-size: 2em;
+    }
+    .AssemblerControls h1 {
+        font-size: 1rem;
+        margin: .5rem;
+    }
+    .AssemblerControls .toggle {
+        margin-right: 10px;
+    }
+    .switchLabel {
+        margin: 1vmin;
+    }
+    .switchBody {
+        width: 40px;
+    }
+    .switchBody input {
+        opacity: 0;
+        width: 10px;
+        height: 0;
+    }
+    .slider {
+        width: 40px;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        transition: .4s;
+    }
+    .slider:before {
+        height: 10px;
+        width: 10px;
+        bottom: 5px;
+        transition: .4s; 
+    }
+    #tc {
+        top: -8px;
+        left: -5px;
+        transition: 0.4s;
+    }
+    input:checked + .slider >#tc {
+        transform: translateX(25px);
+        transition: 0.4s
+    }
+}
 
 .TextAreas{
-    width: 100%;
-    height: 80vh;
     display: flex;
 }
 
 h1{
     font-family: monospace;
     font-weight: lighter;
-    font-size: 2rem;
     color: white;
 }
 
@@ -16,12 +267,8 @@ h1{
     background-color: black;
     border: 2px black;
     color: white;
-    margin-top: 2vh;
-    padding: 2.5vh;
     display: inline-block;
-    font-size: 2em;
     font-family: monospace;
-    width: 100%;
 }
 
 .assemblerbtn:active{
@@ -32,25 +279,23 @@ button {
     background-color: black;
     color: white;
     display: inline-block;
-    font-size: 1em;
     font-family: monospace;
-    width: 100%;
 }
 
 textarea, .textArea {
     resize: none;
-    width: 100%;
-    height: 100%;
     border: 1px solid black;
-    margin: .15vw;
-    padding: 5px;
     background-color: #222222;
     color: white;
-    font-size: clamp(12px, 1.3vw, 30px);
     font-family: monospace;
 }
 
 textarea:focus{
+    outline: none;
+    border-color: #349;
+}
+
+.textArea:focus{
     outline: none;
     border-color: #349;
 }
@@ -65,9 +310,7 @@ textarea:focus{
 .AssemblerControls h1 {
     font-family: monospace;
     font-weight: lighter;
-    font-size: clamp(12px, 1.3vw, 30px);
     color: white;
-    margin: 10px;
 }
 
 .AssemblerControls .toggle {
@@ -75,12 +318,13 @@ textarea:focus{
     display: flex;
     flex-direction: row;
     align-items: center;
-    margin-right: 10px;
 }
 
 html, body {
     margin: 0%;
     padding: 0%;
+    height: 100%;
+    width: 100%;
     min-height: 100%;
     min-width: 100%;
     background-color: #222222;
@@ -90,7 +334,6 @@ html, body {
     font-family: monospace;
     font-weight: lighter;
     color: white;
-    margin: 1vmin;
 }
 
 .button {
@@ -100,25 +343,12 @@ html, body {
 .switchBody {
     position: relative;
     display: inline-block;
-    width: 40px;
-}
-
-.switchBody input {
-    opacity: 0;
-    width: 10px;
-    height: 0;
 }
 
 .slider {
-    width: 40px;
     position: absolute;
     cursor: pointer;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
     background-color: #444444;
-    transition: .4s;
 }
 
 input:checked + .slider {
@@ -128,21 +358,9 @@ input:checked + .slider {
 .slider:before {
     position: absolute;
     content: "";
-    height: 10px;
-    width: 10px;
-    bottom: 5px;
     /* background-color: white; */
-    transition: .4s; 
 }
 
 #tc {
     position: absolute;
-    top: -8px;
-    left: -5px;
-    transition: 0.4s;
-}
-
-input:checked + .slider >#tc {
-    transform: translateX(25px);
-    transition: 0.4s
 }
