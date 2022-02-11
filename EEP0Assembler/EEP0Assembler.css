@@ -1,24 +1,22 @@
 
 .TextAreas{
     width: 100%;
-    height: 70vh;
+    height: 80vh;
     display: flex;
 }
 
 h1{
     font-family: monospace;
     font-weight: lighter;
-    font-size: 2em;
+    font-size: 2rem;
     color: white;
 }
 
 .assemblerbtn {
     background-color: black;
     border: 2px black;
-    position: absolute;
-    bottom: 0;
     color: white;
-    margin-top: 1.5vh;
+    margin-top: 2vh;
     padding: 2.5vh;
     display: inline-block;
     font-size: 2em;
@@ -32,7 +30,6 @@ h1{
 
 button {
     background-color: black;
-    border: 2px black;
     color: white;
     display: inline-block;
     font-size: 1em;
@@ -49,11 +46,11 @@ textarea, .textArea {
     padding: 5px;
     background-color: #222222;
     color: white;
-    font-size: 1.5em;
+    font-size: clamp(12px, 1.3vw, 30px);
     font-family: monospace;
 }
 
-textarea:focus {
+textarea:focus{
     outline: none;
     border-color: #349;
 }
@@ -68,7 +65,7 @@ textarea:focus {
 .AssemblerControls h1 {
     font-family: monospace;
     font-weight: lighter;
-    font-size: 1.5em;
+    font-size: clamp(12px, 1.3vw, 30px);
     color: white;
     margin: 10px;
 }

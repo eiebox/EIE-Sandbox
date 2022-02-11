@@ -162,7 +162,6 @@ function runAssembler(){
             }
         }
     }
-    Message = Message.replace(/\n/g, '<br>');
     document.getElementById('AssemblyOutput').innerHTML = Message;
 }
 

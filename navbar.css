@@ -11,7 +11,6 @@ html, body {
     min-height: 100%;
     min-width: 100%;
     overflow: hidden;
-    background-color: #333333;
 }
 
 /* Navigation Bar */
@@ -22,14 +21,16 @@ html, body {
     justify-content: flex-start;
     align-items: center;
     display: flex;
-    height: 50px;
+    min-height: 4vh;
+    max-height: 6vh;
 }
 
 .TopNavBar a{
     text-align: center;
+    display: flex;
     color: white;
     font-family: monospace;
-    font-size: 1.5em;
+    font-size: clamp(11px, 1.3vw, 50px);
     padding: 1vw;
     text-decoration: none;
 }
@@ -39,7 +40,7 @@ html, body {
 }
 
 #Logo {
-    height: 30px;
+    height: calc(1vw + 1vh);
     background-color: #444444;
 }
 
@@ -51,14 +52,14 @@ html, body {
 }
 
 i.fa {
-    font-size: 15px;
+    font-size: clamp(11px, 1.3vw, 50px);
 }
   
 .dropdown .dropbtn {
     text-align: center;
     color: white;
     font-family: monospace;
-    font-size: 1.5em;
+    font-size: clamp(11px, 1.3vw, 50px);
     padding: 1vw;
     cursor: pointer;
     border: none;
@@ -68,7 +69,6 @@ i.fa {
 
 .dropdown-content {
     display: none;
-
     position: absolute;
     background-color: #f9f9f9;
     min-width: 160px;
