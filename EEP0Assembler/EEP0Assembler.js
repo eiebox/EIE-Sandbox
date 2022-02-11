@@ -1,93 +1,135 @@
 
-var ConversionDictOpcode = {
-    "MOV": "000",
-    "ADD": "001",
-    "SUB": "010",
-    "ADC": "011",
-    "LDR": "100",
-    "STR": "101",
+const ConversionDictOpcode = {
+    'MOV': '000',
+    'ADD': '001',
+    'SUB': '010',
+    'ADC': '011',
+    'LDR': '100',
+    'STR': '101',
 }
 
-var ConversionDictOpcodeJMP = {
-    "JMP": "1100", 
-    "JNE": "1101", 
-    "JCS": "1110", 
-    "JMI": "1111", 
+const ConversionDictOpcodeJMP = {
+    'JMP': '1100', 
+    'JNE': '1101', 
+    'JCS': '1110', 
+    'JMI': '1111', 
 }
 
-var ConversionDictRegister = {
-    "R0": "00",
-    "R1": "01",
-    "R2": "10",
-    "R3": "11"
+const ConversionDictRegister = {
+    'R0': '00',
+    'R1': '01',
+    'R2': '10',
+    'R3': '11'
 }
 
-var Message = "";
-var CurrentLine = "";
-var outputEncoding = 2;
+class AssemblerError extends Error {
+    constructor(message, vertPos) {
+        super(message);
+        this.vertPos = vertPos;
+    }
+}
 
-function OpCodeResolver(Line){
-    Line = Line.replace(",","");
+class InvalidOpcodeError extends AssemblerError {
+    constructor(vertPos, invalidOpcode) {
+        super(`Invalid Opcode: "${invalidOpcode}"`, vertPos);
+    }
+}
+
+class OperandSizeError extends AssemblerError {
+    constructor(vertPos, expectedNumOperands, receivedNumOperands) {
+        if (receivedNumOperands > expectedNumOperands) {
+            super(`Too many Operands! Expected ${expectedNumOperands} but read ${receivedNumOperands}`, vertPos);
+        }
+        else if (receivedNumOperands < expectedNumOperands) {
+            super(`Not enough Operands! Expected ${expectedNumOperands} but read ${receivedNumOperands}`, vertPos);
+        }
+        else super('Unknown operand size error', vertPos);
+    }
+}
+
+class ImmOutRangeError extends AssemblerError {
+    constructor(vertPos, minVal, maxVal) {
+        super(`Immediate Operand Invalid! Value must be between ${minVal} and ${maxVal}`, vertPos);
+    }
+}
+
+class InvalidInputError extends AssemblerError {
+    constructor(vertPos, expectedFormat) {
+        super(`Input invalid! Expected ${expectedFormat}`, vertPos);
+    }
+}
+
+let Message = "";
+let CurrentLine = "";
+let outputEncoding = 2;
+
+function OpCodeResolver(Line) {
+    let errorsEncountered = [];
+
+    Line = Line.replace(/,/g,''); // if replace pattern is of type string, only the first occurence is replaced, this REGEX replaces all occurences.
     Line = Line.trim();
-    Line = Line.split(" ");
-    if (ConversionDictOpcode[Line[0]] != undefined){
+    Line = Line.split(' ');
+    if (ConversionDictOpcode[Line[0]] != undefined) {
         Line[0] = ConversionDictOpcode[Line[0]];
-        if (Line.length != 3){
-            throw("Incorrect Operand Size")
+        if (Line.length != 3) {
+            errorsEncountered.push(new OperandSizeError(1, 2, Line.length - 1)); // error is whole line as too many operands were entered
         }
         else{
-            if(ConversionDictRegister[Line[1]] != undefined){
+            if(ConversionDictRegister[Line[1]] != undefined) {
                 Line[1] = ConversionDictRegister[Line[1]];
-                if(ConversionDictRegister[Line[2]] != undefined){
-                    Line[2] = ConversionDictRegister[Line[2]] + "00000000";
-                    Line[0] = Line[0] + "0";
+                if(ConversionDictRegister[Line[2]] != undefined) {
+                    Line[2] = `${ConversionDictRegister[Line[2]]}00000000`;
+                    Line[0] = `${Line[0]}0`;
                 }
-                else if (Line[2][0] == "#"){
-                    Line[2] = Line[2].replace("#",'');
-                    if(Line[2] >= 0 && Line[2] <= 255){
+                else if (Line[2][0] == '#') {
+                    Line[2] = Line[2].replace('#','');
+                    if(Line[2] >= 0 && Line[2] <= 255) {
                         Line[2] = Number(Line[2]);
                         Line[2] = Line[2].toString(2);
-                        for(Line[2]; Line[2].length < 10; Line[2] = "0".concat(Line[2]));
+                        for(Line[2]; Line[2].length < 10; Line[2] = '0'.concat(Line[2]));
                         Line[1] = "1".concat(Line[1]);
                     }
-                    else{
-                        throw("Immediate Operand Too large or Small")
+                    else {
+                        errorsEncountered.push(new ImmOutRangeError(2, 0, 255));
                     }
                 }
-                else{
-                    throw("Invalid Input Value")
+                else {
+                    errorsEncountered.push(new InvalidInputError(2, 'a register or an immediate'));
                 }
-            }else{
-                throw("Register Error (Position or Immediate Operand)")
+            } else {
+                errorsEncountered.push(new InvalidInputError(1, 'a register'));
             }
         }
     }
-    else if(ConversionDictOpcodeJMP[Line[0]] != undefined){
+    else if(ConversionDictOpcodeJMP[Line[0]] != undefined) {
         Line[0] = ConversionDictOpcodeJMP[Line[0]];
-        Line[0] = Line[0] + "0000";
-        if (Line.length != 2){
-            throw("Incorrect Operand Size")
+        Line[0] = `${Line[0]}0000`;
+        if (Line.length != 2) {
+            errorsEncountered.push(new OperandSizeError(1, 1, Line.length - 1));
         }
-        else{
-            if(Line[1][0] == "#"){
-                Line[1] = Line[1].replace("#",'');
+        else {
+            if(Line[1][0] == '#'){
+                Line[1] = Line[1].replace('#','');
                 if(Line[1] >= 0 && Line[1] <= 255){
                     Line[1] = Number(Line[1]);
                     Line[1] = Line[1].toString(2);
                     for(Line[1]; Line[1].length < 8; Line[1] = "0".concat(Line[1]));
                 }
-                else{
-                    throw("Immediate Operand Too large or small")
+                else {
+                    errorsEncountered.push(new ImmOutRangeError(1, 0, 255));
                 }
             }
             else{
-                throw("Incorrect operand")
+                errorsEncountered.push(new InvalidInputError(1, 'an immediate'));
             }
         }
     }
-    else{
-        throw("Incorrect opcode");
+    else {
+        errorsEncountered.push(new InvalidOpcodeError(1, Line[0]));
     }
+
+    if(errorsEncountered.length > 0) throw errorsEncountered;
+
     if(outputEncoding == 16){
         // convert binary number back to int 
         // convert int to hex
@@ -100,32 +142,32 @@ function OpCodeResolver(Line){
 
 function runAssembler(){
     Message = "";
-    document.getElementById("AssemblyOutput").style.color = "white";
-    var InputText = document.getElementById("AssemblyInput").value;
-    InputText = InputText.split("\n");
-    for(var i in InputText){
-        if(InputText[i] != ""){
-            try{
-                Message += OpCodeResolver(InputText[i]) + "\n";
-            }catch(err){
-                Message += err + " on line: " + (Number(i)+1) + "\n";
+    document.getElementById('AssemblyOutput').style.color = 'white';
+    let InputText = document.getElementById('AssemblyInput');
+    InputText = InputText.value.split('\n');
+    for(let i in InputText){
+        if(InputText[i] != '') {
+            try {
+                Message += OpCodeResolver(InputText[i]) + '\n';
+            } catch(err) {
+                document.getElementById('AssemblyOutput').style.color = 'red';
+                if (!err.length) { // if is not array
+                    Message += err.message;
+                } else { // if is array of exceptions
+                    for (let i2 = 0; i2 < err.length; i2++) {
+                        Message += `${err[i2].message} on line ${Number(i) + 1} at position ${err[i2].vertPos + 1}\n`;
 
-                // find selection
-                document.getElementById("AssemblyInput").focus();
-                var errorPos = document.getElementById("AssemblyInput").value.indexOf(InputText[i]);
-                var errorLen = InputText[i].length;
-                // select error
-                document.getElementById("AssemblyInput").setSelectionRange(errorPos, errorPos + errorLen);
-
-                document.getElementById("AssemblyOutput").style.color = "red";
+                    }
+                }
             }
         }
     }
-    document.getElementById("AssemblyOutput").innerHTML = Message;
+    Message = Message.replace(/\n/g, '<br>');
+    document.getElementById('AssemblyOutput').innerHTML = Message;
 }
 
 //function that is run when toggle is clicked
-function switchModes(){
+function switchModes() {
     outputEncoding = (outputEncoding == 2) ? 16 : 2;
     runAssembler();
 }
@@ -138,6 +180,8 @@ document.addEventListener('keydown', (event) => {
                 runAssembler();
                 break;
             case ' ':
+                let checkbox = document.getElementById('binhex');
+                checkbox.checked = !checkbox.checked;
                 switchModes();
                 break;
         }
