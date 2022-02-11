@@ -78,14 +78,6 @@ textarea:focus{
     margin-right: 10px;
 }
 
-header {
-    width: 100vw;
-    height: 6vh;
-    background-color: #444444;
-    justify-content: flex-start;
-    align-items: center;
-}
-
 html, body {
     margin: 0%;
     padding: 0%;

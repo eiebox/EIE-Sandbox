@@ -1,45 +1,9 @@
-.TopNavBar {
-    background-color: #444444;
-    overflow: hidden;
-    justify-content: flex-start;
-    align-items: center;
-    display: flex;
-    max-height: 6vh;
-}
-
-.TopNavBar a{
-    text-align: center;
-    display: flex;
-    color: white;
-    font-family: monospace;
-    font-size: clamp(10px, 1vw, 40px);
-    padding: 1vw;
-}
-
-.TopNavBar a:hover #Logo, .TopNavBar a:hover{
-   background-color: #363636;
-}
-
-header {
-    width: 100%;
-    height: 6vh;
-    background-color: #444444;
-    display: flex;
-    justify-content: flex-start;
-    align-items: center;
-}
-
 html, body {
     margin: 0%;
     padding: 0%;
     min-height: 100%;
     min-width: 100%;
     overflow: hidden;
-}
-
-#Logo {
-    height: calc(1vw + 1vh);
-    background-color: #444444;
 }
 
 #SideBar {
