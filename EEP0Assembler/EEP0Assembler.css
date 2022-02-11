@@ -1,7 +1,7 @@
 
 .TextAreas{
     width: 100%;
-    height: 68vh;
+    height: 70vh;
     display: flex;
 }
 
@@ -12,13 +12,28 @@ h1{
     color: white;
 }
 
-button {
+.assemblerbtn {
     background-color: black;
     border: 2px black;
     position: absolute;
+    bottom: 0;
     color: white;
     margin-top: 1.5vh;
     padding: 2.5vh;
+    display: inline-block;
+    font-size: 2em;
+    font-family: monospace;
+    width: 100%;
+}
+
+.assemblerbtn:active{
+    background-color: #272727;
+}
+
+button {
+    background-color: black;
+    border: 2px black;
+    color: white;
     display: inline-block;
     font-size: 1em;
     font-family: monospace;
@@ -31,10 +46,10 @@ textarea, .textArea {
     height: 100%;
     border: 1px solid black;
     margin: .15vw;
-    padding: 2px;
+    padding: 5px;
     background-color: #222222;
     color: white;
-    /* font-size: calc(1.5vh + .5vw); */
+    font-size: 1.5em;
     font-family: monospace;
 }
 
@@ -53,7 +68,7 @@ textarea:focus {
 .AssemblerControls h1 {
     font-family: monospace;
     font-weight: lighter;
-    /* font-size: 2vh; */
+    font-size: 1.5em;
     color: white;
     margin: 10px;
 }
@@ -64,30 +79,6 @@ textarea:focus {
     flex-direction: row;
     align-items: center;
     margin-right: 10px;
-}
-
-
-.TopNavBar {
-    background-color: #444444;
-    overflow: hidden;
-    justify-content: flex-start;
-    align-items: center;
-    display: flex;
-    max-height: 6vh;
-    min-height: 30px
-}
-
-.TopNavBar a{
-    text-align: center;
-    display: flex;
-    color: white;
-    font-family: monospace;
-    /* font-size: clamp(10px, 1vw, 40px); */
-    padding: 1vw;
-}
-
-.TopNavBar a:hover #Logo, .TopNavBar a:hover{
-   background-color: #363636;
 }
 
 header {
@@ -106,35 +97,15 @@ html, body {
     background-color: #222222;
 }
 
-#Logo {
-    height: calc(1vw + 1vh);
-    background-color: #444444;
-    margin: 10px;
-}
-
 .switchLabel {
     font-family: monospace;
     font-weight: lighter;
-    /* font-size: 2vh; */
     color: white;
     margin: 1vmin;
 }
 
 .button {
     cursor: pointer;
-}
-
-#toggleOutputMode > div > span#switchBody {
-    color: green;
-    transition: all ease 0.1s;
-}
-
-#switchBody {
-    /* border: 2px solid red; */
-    background-color: grey;
-    display: inline-block;
-    border-radius: 5px;
-    width: 5vw
 }
 
 .switchBody {

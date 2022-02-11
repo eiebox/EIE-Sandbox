@@ -52,10 +52,17 @@
     <div class="AssemblerControls">
         <h1 style="color: white;">[EEP1 - ASSEMBLER]</h1>
         
-        <div class="toggle"> 
-            <h1>BIN</h1>           
-            <input class="apple-switch" type="checkbox" onclick="switchModes();"> 
-            <h1>HEX</h1>           
+        <div class="toggle">
+            <div id="switch">
+                <span class="switchLabel">[BIN]</span>
+                <label class="switchBody">
+                    <input type="checkbox" id="binhex" class="checkbox" onclick="switchModes()">
+                    <span class="slider">
+                        <img id="tc" src="../StaticContent/tc1.png" alt="The wondeful Thomas Clarke">
+                    </span>
+                </label>
+                <span class="switchLabel">[HEX]</span>
+            </div>
         </div>
         
     </div>

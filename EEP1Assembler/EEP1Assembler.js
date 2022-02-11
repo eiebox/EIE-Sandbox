@@ -202,6 +202,8 @@ document.addEventListener('keydown', (event) => {
                 runAssembler();
                 break;
             case ' ':
+                let checkbox = document.getElementById('binhex');
+                checkbox.checked = !checkbox.checked;
                 switchModes();
                 break;
         }

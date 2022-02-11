@@ -1,7 +1,7 @@
 
 .TextAreas{
     width: 100%;
-    height: 80vh;
+    height: 70vh;
     display: flex;
 }
 
@@ -17,11 +17,12 @@ h1{
     background-color: black;
     border: 2px black;
     position: absolute;
+    bottom: 0;
     color: white;
     margin-top: 1.5vh;
     padding: 2.5vh;
     display: inline-block;
-    font-size: 1em;
+    font-size: 2em;
     font-family: monospace;
     width: 100%;
 }
@@ -37,9 +38,10 @@ textarea {
     height: 100%;
     border: 1px solid black;
     margin: .15vw;
+    padding: 5px;
     background-color: #222222;
     color: white;
-    font-size: calc(1.5vh + .5vw);
+    font-size: 1.5em;
     font-family: monospace;
 }
 
@@ -58,9 +60,9 @@ textarea:focus {
 .AssemblerControls h1 {
     font-family: monospace;
     font-weight: lighter;
-    font-size: 2vh;
+    font-size: 1.5em;
     color: white;
-    margin: 1vh;
+    margin: 10px;
 }
 
 .AssemblerControls .toggle {
@@ -68,45 +70,77 @@ textarea:focus {
     display: flex;
     flex-direction: row;
     align-items: center;
+    margin-right: 10px;
 }
 
-/* Css for nice looking toggle switch, stolen from https://codeburst.io/pure-css3-input-as-the-ios-checkbox-8b6347d5cefb
-start
-*/
-
-input.apple-switch {
-  position: relative;
-  -webkit-appearance: none;
-  outline: none;
-  width: 50px;
-  height: 30px;
-  background-color: #fff;
-  border: 1px solid #D9DADC;
-  border-radius: 50px;
-  box-shadow: inset -20px 0 0 0 #fff;
-  
+.switchLabel {
+    font-family: monospace;
+    font-weight: lighter;
+    color: white;
+    margin: 1vmin;
 }
 
-input.apple-switch:after {
-  content: "";
-  position: absolute;
-  top: 1px;
-  left: 1px;
-  background: transparent;
-  width: 26px;
-  height: 26px;
-  border-radius: 50%;
-  box-shadow: 2px 4px 6px rgba(0,0,0,0.2);
+.switchBody {
+    position: relative;
+    display: inline-block;
+    width: 40px;
 }
 
-input.apple-switch:checked {
-  box-shadow: inset 20px 0 0 0 #4ed164;
-  border-color: #4ed164;
+.switchBody input {
+    opacity: 0;
+    width: 10px;
+    height: 0;
 }
 
-input.apple-switch:checked:after {
-  left: 20px;
-  box-shadow: -2px 4px 3px rgba(0,0,0,0.05);
+.slider {
+    width: 40px;
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #444444;
+    transition: .4s;
 }
 
-/* end */
+input:checked + .slider {
+    background-color: #10c0d0;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 10px;
+    width: 10px;
+    bottom: 5px;
+    /* background-color: white; */
+    transition: .4s; 
+}
+
+
+input:checked + .slider {
+    background-color: #10c0d0;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 10px;
+    width: 10px;
+    bottom: 5px;
+    /* background-color: white; */
+    transition: .4s; 
+}
+
+#tc {
+    position: absolute;
+    top: -8px;
+    left: -5px;
+    transition: 0.4s;
+}
+
+input:checked + .slider >#tc {
+    transform: translateX(25px);
+    transition: 0.4s
+}

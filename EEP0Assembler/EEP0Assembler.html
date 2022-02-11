@@ -67,17 +67,10 @@
         
     </div>
     <div class="TextAreas">
-<<<<<<< HEAD
-        <textarea class="inputTextArea" id="AssemblyInput" rows="10" spellcheck="false">MOV R0, R1</textarea>    
-        <textarea readonly id="AssemblyOutput" rows="10" spellcheck="false">0000000100000000</textarea>   
-    </div> 
-    <button type="button" class="assemblerbtn" onclick="runAssembler();">Run Assembler</button>
-=======
         <textarea id="AssemblyInput" rows="10">MOV R0, R1</textarea>    
         <div id="AssemblyOutput" class="textArea">0000000100000000</div>   
     </div> 
-    <button class="button" type="button" onclick="runAssembler();">Run Assembler</button>
->>>>>>> c9794b3 (Improve error handling. EEP0 can still only report one exception per line but this is due to the nature of the if-else programming involved. Change button, implement transition and fix keyboard trigger not changing switch.)
+    <button class="assemblerbtn" type="button" onclick="runAssembler();">Run Assembler</button>
     <script src="EEP0Assembler.js"></script>
 </body>
 </html>
