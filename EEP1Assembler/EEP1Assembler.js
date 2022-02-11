@@ -185,7 +185,8 @@ function runAssembler(){
             }
         }
     }
-    document.getElementById("AssemblyOutput").innerHTML = Message;
+    Message = Message.replace(/\n/g, '<br>');
+    document.getElementById('AssemblyOutput').innerHTML = Message;
 }
 
 //function that is run when toggle is clicked
