@@ -174,7 +174,7 @@ function runAssembler(){
     Message = "";
     document.getElementById("AssemblyOutput").style.color = "white";
     var InputText = document.getElementById("AssemblyInput");
-    localStorage.setItem('input', InputText.value);
+    localStorage.setItem('input2', InputText.value);
     InputText = InputText.value.split("\n");
     for(var i in InputText){
         if(InputText[i] != ""){
@@ -187,9 +187,9 @@ function runAssembler(){
         }
     }
     Message = Message.replace(/\n/g, '<br>');
-    localStorage.setItem('message', Message);
-    localStorage.setItem('encoding', outputEncoding);
-    localStorage.setItem('textcolor', document.getElementById('AssemblyOutput').style.color);
+    localStorage.setItem('message2', Message);
+    localStorage.setItem('encoding2', outputEncoding);
+    localStorage.setItem('textcolor2', document.getElementById('AssemblyOutput').style.color);
     document.getElementById('AssemblyOutput').innerHTML = Message;
 }
 
@@ -218,10 +218,10 @@ document.addEventListener('keydown', (event) => {
 // Add a function to load local storage
 function LoadData(){
     if(localStorage.getItem('input') != null){
-        document.getElementById('AssemblyInput').innerHTML = localStorage.getItem('input');
-        document.getElementById('AssemblyOutput').innerHTML = localStorage.getItem('message');
-        outputEncoding = localStorage.getItem('encoding');
-        document.getElementById('AssemblyOutput').style.color = localStorage.getItem('textcolor');
+        document.getElementById('AssemblyInput').innerHTML = localStorage.getItem('input2');
+        document.getElementById('AssemblyOutput').innerHTML = localStorage.getItem('message2');
+        outputEncoding = localStorage.getItem('encoding2');
+        document.getElementById('AssemblyOutput').style.color = localStorage.getItem('textcolor2');
         if (outputEncoding != 2){
             let checkbox = document.getElementById('binhex');
             checkbox.checked = !checkbox.checked;
