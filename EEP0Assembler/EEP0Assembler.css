@@ -252,17 +252,14 @@
         transition: 0.4s
     }
 }
-
 .TextAreas{
     display: flex;
 }
-
 h1{
     font-family: monospace;
     font-weight: lighter;
     color: white;
 }
-
 .assemblerbtn {
     background-color: black;
     border: 2px black;
@@ -270,18 +267,15 @@ h1{
     display: inline-block;
     font-family: monospace;
 }
-
 .assemblerbtn:active{
     background-color: #272727;
 }
-
 button {
     background-color: black;
     color: white;
     display: inline-block;
     font-family: monospace;
 }
-
 textarea, .textArea {
     resize: none;
     border: 1px solid black;
@@ -289,37 +283,34 @@ textarea, .textArea {
     color: white;
     font-family: monospace;
 }
-
 textarea:focus{
     outline: none;
     border-color: #349;
 }
-
 .textArea:focus{
     outline: none;
     border-color: #349;
 }
-
 .AssemblerControls {
     justify-content: flex-start;
     align-items: center;
     display: flex;
     flex-direction: row;
 }
-
+#AssemblyOutput{
+    text-decoration: none;
+}
 .AssemblerControls h1 {
     font-family: monospace;
     font-weight: lighter;
     color: white;
 }
-
 .AssemblerControls .toggle {
     margin-left: auto;
     display: flex;
     flex-direction: row;
     align-items: center;
 }
-
 html, body {
     margin: 0%;
     padding: 0%;
@@ -329,38 +320,31 @@ html, body {
     min-width: 100%;
     background-color: #222222;
 }
-
 .switchLabel {
     font-family: monospace;
     font-weight: lighter;
     color: white;
 }
-
 .button {
     cursor: pointer;
 }
-
 .switchBody {
     position: relative;
     display: inline-block;
 }
-
 .slider {
     position: absolute;
     cursor: pointer;
     background-color: #444444;
 }
-
 input:checked + .slider {
     background-color: #10c0d0;
 }
-
 .slider:before {
     position: absolute;
     content: "";
     /* background-color: white; */
 }
-
 #tc {
     position: absolute;
 }
