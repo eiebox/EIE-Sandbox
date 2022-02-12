@@ -164,6 +164,7 @@ function runAssembler(){
         }
     }
     Message = Message.replace(/\n/g, '<br>');
+    localStorage.setItem('textcolor', document.getElementById('AssemblyOutput').style.color);
     localStorage.setItem('message', Message);
     localStorage.setItem('encoding', outputEncoding);
     document.getElementById('AssemblyOutput').innerHTML = Message;
@@ -196,6 +197,7 @@ function LoadData(){
     if(localStorage.getItem('input') != null){
         document.getElementById('AssemblyInput').innerHTML = localStorage.getItem('input');
         document.getElementById('AssemblyOutput').innerHTML = localStorage.getItem('message');
+        document.getElementById('AssemblyOutput').style.color = localStorage.getItem('textcolor');
         outputEncoding = localStorage.getItem('encoding');
         if (outputEncoding != 2){
             let checkbox = document.getElementById('binhex');
