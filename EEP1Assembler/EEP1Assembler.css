@@ -19,10 +19,7 @@
         margin: .15em;
         padding: 5px;
         font-size: 1.5em;
-    }
-    #AssemblyOutput{
-        text-decoration: none;
-    }    
+    }  
     .AssemblerControls h1 {
         font-size: 1rem;
         margin: .5rem;

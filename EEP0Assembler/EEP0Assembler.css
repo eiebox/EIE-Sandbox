@@ -297,9 +297,6 @@ textarea:focus{
     display: flex;
     flex-direction: row;
 }
-#AssemblyOutput{
-    text-decoration: none;
-}
 .AssemblerControls h1 {
     font-family: monospace;
     font-weight: lighter;
