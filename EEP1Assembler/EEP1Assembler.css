@@ -334,6 +334,7 @@ html, body {
     font-family: monospace;
     font-weight: lighter;
     color: white;
+    margin: 10px;
 }
 
 .button {
