@@ -105,7 +105,7 @@ function Register(token){
     if(token[0] == "R"){
         let regNum = Number(token.replace("R",""));
         // check register is correct size
-        if (regNum < REGISTER_COUNT || regNum >= 0){
+        if (regNum < REGISTER_COUNT && regNum >= 0){
             return regNum.toString(2).padStart(REGISTER_BITS, "0");
         } else {
             throw new RegOutRangeError(REGISTER_COUNT - 1);
@@ -164,16 +164,18 @@ function Operand(token){
     else throw new InvalidInputError('a register, an 8-bit immediate or a register and 5-bit immediate');
 }
 
+
+// Globals
 var Message = "";
 var CurrentLine = "";
 var outputEncoding = 2;
 
 function OpCodeResolver(Line){
-    Line = Line.replace(/,/g,"");
-    Line = Line.trim();
-
-    let tokens = Line.split(" ");
+    // formatting line to extract individual tokens
+    let tokens = Line.replace(/,/g,"").trim().split(" ");
     let output = "";
+
+    console.log(tokens);
 
     if (Object.keys(OPCODES).includes(tokens[0])){
         let errors = [];
@@ -223,18 +225,20 @@ function OpCodeResolver(Line){
             }
         }
 
+        if (errors.length != 0) throw errors;
+
         if(outputEncoding == 16){
             // convert binary number back to int 
             // convert int to hex
             // make it uppercase and add leading 0s 
             return parseInt(output, 2).toString(16).toUpperCase().padStart(4, '0');
         }
-        if (errors.length != 0) throw errors;
+        
         return output;
     } else {
         let err = new InvalidOpcodeError();
         err.horizPos = Line.indexOf(tokens[0]);
-        throw [ err ]; // catch in runAssembler expecting error array.
+        throw err; // catch in runAssembler expecting error array.
     }
 }
 
@@ -250,11 +254,36 @@ function runAssembler(){
             try{
                 Message += `${OpCodeResolver(InputText[i])}\n`;
             }catch(err){
-                document.getElementById("AssemblyOutput").style.color = "red";
-                if(err.length) {
+                console.log(err);
+                //document.getElementById("AssemblyOutput").style.color = "red";
+                if(err.length > 0) {                    
+                    Message += `Error on line ${i}: "`;
+                    // copy current line in ouput as a bunch of spans with id same as posisiton and line                    
+                    splitLine = InputText[i].replace(/,/g,"").trim().split(" "); // extracting tokens
+                    for(tok of splitLine){
+                        let pos = InputText[i].indexOf(tok);
+
+                        //very obtuse way of doing this, but had issues with simpler methods
+                        let found = -1;
+                        for(i2 in err){  
+                            if(err[i2].horizPos == pos){
+                                found = i2;
+                            }
+                        }
+
+                        if(found > -1){
+                            Message += `<span id="${pos}" class="highlightError">${tok}</span> `;
+                            // remove error from list of errors
+                            err.splice(found, 1);
+                        } else {
+                            Message += `<span id="${pos}">${tok}</span> `;
+                        }
+                    }
+                    Message += '"\n';
+                    /*
                     for(i2 in err) {
                         Message += `Line ${Number(i) + 1}: Error! ${err[i2].message} at position ${err[i2].horizPos + 1 ?? 'unknown'}\n`
-                    }
+                    }*/
                 }
                 else {
                     Message += `${err} on line: ${(Number(i)+1)}\n`;
