@@ -290,15 +290,17 @@ function runAssembler(){
                         } else {
                             Message += `<span id="${pos}">${tok}</span> `;
                         }
+
+                        
                     }
-                    Message += '"\n';
-                    /*
-                    for(i2 in err) {
-                        Message += `Line ${Number(i) + 1}: Error! ${err[i2].message} at position ${err[i2].horizPos + 1 ?? 'unknown'}\n`
-                    }*/
+                    Message += '"';
+
+                    // TODO printing left over erros 
+
+                    Message += '\n';
                 }
                 else {
-                    Message += `${err} on line: ${(Number(i)+1)}\n`;
+                    Message += `${err} on line: ${i}\n`;
                 }
             }
         }
