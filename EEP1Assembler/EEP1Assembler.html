@@ -50,10 +50,9 @@
 
 <!-- END OF NAVBAR STUFF -->
     <div class="AssemblerControls">
-        <h1 style="color: white;">[EEP1 - ASSEMBLER]</h1>
-        
+        <h1>[EEP1 - ASSEMBLER]</h1>
+                
         <div class="toggle">
-            <div id="switch">
                 <span class="switchLabel">[BIN]</span>
                 <label class="switchBody">
                     <input type="checkbox" id="binhex" class="checkbox" onclick="switchModes()">
@@ -62,15 +61,14 @@
                     </span>
                 </label>
                 <span class="switchLabel">[HEX]</span>
-            </div>
         </div>
         
     </div>
     <div class="TextAreas">
         <textarea id="AssemblyInput" rows="10" spellcheck="false">MOV R0, R1</textarea>    
-        <div readonly href="#" id="AssemblyOutput" class="textArea" rows="10" tabindex="0">0000000000100000</div>   
+        <div readonly href="#" id="AssemblyOutput" class="textArea" rows="10" tabindex="0">0000000000100000</div> 
     </div> 
-    <button type="button" class="assemblerbtn" onclick="runAssembler();">Run Assembler</button>
+    <button class="assemblerbtn" type="button" onclick="runAssembler();">Run Assembler</button>
     <script src="EEP1Assembler.js"></script>
 </body>
 </html>

@@ -259,9 +259,9 @@ function OpCodeResolver(Line){
 function runAssembler(){
     Message = "";
     document.getElementById("AssemblyOutput").style.color = "white";
-    let InputText = document.getElementById("AssemblyInput");
-    localStorage.setItem('input2', InputText.value);
-    InputText = InputText.value.split("\n");
+    let InputText = document.getElementById('AssemblyInput').value.toUpperCase();
+    localStorage.setItem('input2', InputText);
+    InputText = InputText.split('\n');
     for(i in InputText){
         if(InputText[i] != ""){
             try{
