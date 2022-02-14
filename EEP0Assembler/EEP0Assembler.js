@@ -133,9 +133,9 @@ function OpCodeResolver(Line) {
         // convert binary number back to int 
         // convert int to hex
         // make it uppercase and add leading 0s 
-        return parseInt(Line.join(''), 2).toString(16).toUpperCase().padStart(4, '0');
+        return "ox" + parseInt(Line.join(''), 2).toString(16).toUpperCase().padStart(4, '0');
     }
-    return Line.join('');
+    return "0b" + Line.join('');
 }
 
 
