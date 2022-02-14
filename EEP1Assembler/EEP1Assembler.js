@@ -267,7 +267,6 @@ function runAssembler(){
             try{
                 Message += `${OpCodeResolver(InputText[i])}\n`;
             }catch(err){
-                console.log(err);
                 //document.getElementById("AssemblyOutput").style.color = "red";
                 if(err.length > 0) {                    
                     Message += `Error on line ${i}: "`;
