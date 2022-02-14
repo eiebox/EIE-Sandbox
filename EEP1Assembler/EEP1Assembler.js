@@ -267,26 +267,21 @@ function runAssembler(){
             try{
                 Message += `${OpCodeResolver(InputText[i])}\n`;
             }catch(errs){
-                console.log(errs)
                 //document.getElementById("AssemblyOutput").style.color = "red";
                 if(errs.length > 0) {                    
                     Message += `Error on line ${i}: "`;
                     // copy current line in ouput as a bunch of spans with id same as posisiton and line                    
                     splitLine = InputText[i].replace(/,/g,"").trim().split(" "); // extracting tokens
-                    splitLine.push(" "); // add trailing white space for any 
-                    console.log(splitLine);
+                    splitLine.push(" "); // add trailing white space for any missing tokens
 
                     let errTokens = [];
                     for(e in errs){
-                        console.log(`${errs[e].message} [${errs[e].errToken}]`);
                         errTokens.push(errs[e].errToken);
                     }
 
-                    console.log(errTokens);
                     
                     for(tok of splitLine){
                         let pos = InputText[i].indexOf(tok);
-                        console.log(tok);
 
                         // check if token is an error
                         if(errTokens.includes(tok)){
