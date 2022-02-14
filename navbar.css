@@ -161,6 +161,7 @@ html, body {
     background-color: #444444;
     color: white;
     text-align: center;
+    font-family: monospace;
 }
 
 #FooterDiv{
