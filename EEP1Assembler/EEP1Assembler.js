@@ -244,10 +244,10 @@ function OpCodeResolver(Line){
             // convert binary number back to int 
             // convert int to hex
             // make it uppercase and add leading 0s 
-            return parseInt(output, 2).toString(16).toUpperCase().padStart(4, '0');
+            return "0x" + parseInt(output, 2).toString(16).toUpperCase().padStart(4, '0');
         }
         
-        return output;
+        return "0b" + output;
     } else {
         let err = new InvalidOpcodeError();
         err.horizPos = Line.indexOf(tokens[0]);
