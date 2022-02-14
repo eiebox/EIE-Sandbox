@@ -15,50 +15,48 @@ JMP:
 Other possible improvement is to encode values to be accepted in the opcodes
 
 Convert registers by chopping R off and converting number to binary
-
-
 */
 
 class AssemblerError extends Error {
-    horizPos;
-    constructor(message) {
+    constructor(message, token) {
         super(message);
+        this.errToken = token;
     }
 }
 
 class InvalidOpcodeError extends AssemblerError {
-    constructor() {
-        super('Invalid Opcode!');
+    constructor(token) {
+        super('Invalid Opcode!',token);
     }
 }
 
 class OperandSizeError extends AssemblerError {
-    constructor(expectedNumOperands, receivedNumOperands) {
+    constructor(expectedNumOperands, receivedNumOperands,token) {
         if (receivedNumOperands > expectedNumOperands) {
-            super(`Too many Operands! Expected ${expectedNumOperands} but read ${receivedNumOperands}`);
+            super(`Too many Operands! Expected ${expectedNumOperands} but read ${receivedNumOperands}`,token);
         }
         else if (receivedNumOperands < expectedNumOperands) {
-            super(`Not enough Operands! Expected ${expectedNumOperands} but read ${receivedNumOperands}`);
+            super(`Not enough Operands! Expected ${expectedNumOperands} but read ${receivedNumOperands}`,token);
         }
-        else super('Unknown operand size error');
+        else super('Unknown operand size error',token);
     }
 }
 
 class ImmOutRangeError extends AssemblerError {
-    constructor(minVal, maxVal) {
-        super(`Immediate Operand Invalid! Value must be between ${minVal} and ${maxVal}`);
+    constructor(minVal, maxVal,token) {
+        super(`Immediate Operand Invalid! Value must be between ${minVal} and ${maxVal}`,token);
     }
 }
 
 class RegOutRangeError extends AssemblerError {
-    constructor(maxVal) {
-        super(`Register Number Invalid! Maximum Value ${maxVal}`);
+    constructor(maxVal,token) {
+        super(`Register Number Invalid! Maximum Value ${maxVal}`,token);
     }
 }
 
 class InvalidInputError extends AssemblerError {
-    constructor(expectedFormat) {
-        super(`Input invalid! Expected ${expectedFormat}`);
+    constructor(expectedFormat,token) {
+        super(`Input invalid! Expected ${expectedFormat}`,token);
     }
 }
 
@@ -91,7 +89,7 @@ const OPCODES = {
     "SBC": [0x4, 'Ra', 'Op'],
     "AND": [0x5, 'Ra', 'Op'],
     "XOR": [0x6, 'Ra', 'Op'],    
-    "LSL": [0x7, 'Ra', "0", 'Rb', '#Imms5'],
+    "LSL": [0x7, 'Ra', '0', 'Rb', '#Imms5'],
 // LDR / STR
     "LDR": [0b1000, 'Ra', 'Op'],
     "STR": [0b1010, 'Ra', 'Op'],
@@ -124,10 +122,10 @@ function Register(token){
         if (regNum < REGISTER_COUNT && regNum >= 0){
             return regNum.toString(2).padStart(REGISTER_BITS, "0");
         } else {
-            throw new RegOutRangeError(REGISTER_COUNT - 1);
+            throw new RegOutRangeError(REGISTER_COUNT - 1,token);
         }
     } else {
-        throw new InvalidInputError('a register');
+        throw new InvalidInputError('a register',token);
     }
 }
 
@@ -142,20 +140,20 @@ function Immediate(token, format){
             } else if (immOut >= -16 && immOut < 0) {
                 return twosComplementConversion(immOut).padStart(format, '1');
             } else {
-                throw new ImmOutRangeError(-16, 15);
+                throw new ImmOutRangeError(-16, 15,token);
             }
         } else if (format == 8) {
             let immOut = Number(token.replace("#",""));
             if (immOut >= 0 && immOut <= 255) {
                 return immOut.toString(2).padStart(format, '0');
             } else {
-                throw new ImmOutRangeError(0, 255);
+                throw new ImmOutRangeError(0, 255,token);
             }   
         } else {
-            throw new AssemblerError('Programmer made a mistake!');
+            throw new AssemblerError('Programmer made a mistake!',token);
         }
     } else {
-        throw new InvalidInputError('an immediate (with #)');
+        throw new InvalidInputError('an immediate (with #)',token);
     }
 }
 
@@ -169,13 +167,15 @@ function Operand(token){
             // Register 
             return "0" + Register(token[0]).padEnd(8,"0"); 
         } else {
-            throw new InvalidInputError('a register or an immediate');
+            throw new InvalidInputError('a register or an immediate',token[0]);
         }
     } else if (token.length == 2) {
         // register and Imms5
         return "0" + Register(token[0]) + Immediate(token[1], 5);
+    } else if (token.length == 0) {
+        throw new AssemblerError('Missing operand'," ");
     }
-    else throw new InvalidInputError('a register, an 8-bit immediate or a register and 5-bit immediate');
+    else throw new AssemblerError('Too many inputs',token[0]);
 }
 
 
@@ -198,13 +198,13 @@ function OpCodeResolver(Line){
 
         // append opcode conversion to output
         output += instruction[0].toString(2).padStart(4, '0');
+        // needed for instructions which have arbitrary 0s and 1s
+        let tokensCounter = 1;
         for (let i = 1; i < instruction.length; i++) {
-            const CURRENT_POS = Line.indexOf(tokens[i]);
             if (instruction[i] == "#Imm8"){
                 try {
-                    output += Immediate(tokens[i], 8);                    
+                    output += Immediate(tokens[tokensCounter], 8);                    
                 } catch (error) {
-                    error.horizPos = CURRENT_POS;
                     errors.push(error);
                 }
             } else if (instruction[i] == "Op") {
@@ -214,28 +214,30 @@ function OpCodeResolver(Line){
                 try {
                     output += Operand(operand);
                 } catch (error) {
-                    error.horizPos = CURRENT_POS;
                     errors.push(error);
                 }
             } else if (instruction[i] == "Ra" || instruction[i] == "Rb") {
                 try {
-                    output += Register(tokens[i]);
+                    output += Register(tokens[tokensCounter]);
                 } catch (error) {
-                    error.horizPos = CURRENT_POS;
                     errors.push(error);
                 }
             } else if (instruction[i] == "#Imms5") {
                 try {
-                    output += Immediate(tokens[i], 5);
+                    output += Immediate(tokens[tokensCounter], 5);
                 } catch (error) {
-                    error.horizPos = CURRENT_POS;
                     errors.push(error);
                 }
             } else if (instruction[i] == "1") {
                 output += "1";
+                // tokensCounter doesn't increment in this case since since this doens't correspond to a token
+                tokensCounter -= 1;
             } else if (instruction[i] == "0") {
                 output += "0";
+                // tokensCounter doesn't increment in this case since since this doens't correspond to a token
+                tokensCounter -= 1;
             }
+            tokensCounter++;
         }
 
         if (errors.length != 0) throw errors;
@@ -249,9 +251,7 @@ function OpCodeResolver(Line){
         
         return "0b" + output;
     } else {
-        let err = new InvalidOpcodeError();
-        err.horizPos = Line.indexOf(tokens[0]);
-        throw err; // catch in runAssembler expecting error array.
+        throw new InvalidOpcodeError(tokens[0]); // catch in runAssembler expecting error array.
     }
 }
 
@@ -266,41 +266,43 @@ function runAssembler(){
         if(InputText[i] != ""){
             try{
                 Message += `${OpCodeResolver(InputText[i])}\n`;
-            }catch(err){
+            }catch(errs){
+                console.log(errs)
                 //document.getElementById("AssemblyOutput").style.color = "red";
-                if(err.length > 0) {                    
+                if(errs.length > 0) {                    
                     Message += `Error on line ${i}: "`;
                     // copy current line in ouput as a bunch of spans with id same as posisiton and line                    
                     splitLine = InputText[i].replace(/,/g,"").trim().split(" "); // extracting tokens
+                    splitLine.push(" "); // add trailing white space for any 
+                    console.log(splitLine);
+
+                    let errTokens = [];
+                    for(e in errs){
+                        console.log(`${errs[e].message} [${errs[e].errToken}]`);
+                        errTokens.push(errs[e].errToken);
+                    }
+
+                    console.log(errTokens);
+                    
                     for(tok of splitLine){
                         let pos = InputText[i].indexOf(tok);
+                        console.log(tok);
 
-                        //very obtuse way of doing this, but had issues with simpler methods
-                        let found = -1;
-                        for(i2 in err){  
-                            if(err[i2].horizPos == pos){
-                                found = i2;
-                            }
-                        }
-
-                        if(found > -1){
-                            Message += `<span id="${pos}" class="highlightError">${tok}</span> `;
-                            // remove error from list of errors
-                            err.splice(found, 1);
+                        // check if token is an error
+                        if(errTokens.includes(tok)){
+                            // strange solution to display white space in span
+                            tok = (tok == " ") ? '&nbsp;' : tok;
+                            Message += `<span id="${i}.${pos}" class="highlightError">${tok}</span> `;
                         } else {
-                            Message += `<span id="${pos}">${tok}</span> `;
+                            Message += `<span id="${i}.${pos}">${tok}</span> `;
                         }
-
-                        
                     }
+                    
                     Message += '"';
-
-                    // TODO printing left over erros 
-
                     Message += '\n';
                 }
                 else {
-                    Message += `${err} on line: ${i}\n`;
+                    Message += `Error on line ${i}: ${errs.message}\n`;
                 }
             }
         }
