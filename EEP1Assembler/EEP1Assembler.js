@@ -99,6 +99,22 @@ const OPCODES = {
 
 /* Define functions to interpret different parts of the instructions */
 
+function twosComplementConversion(negative_num){
+    let string_num = (Math.abs(negative_num)-1).toString(2);
+
+    // extend zeros
+    if(string_num[0] == 1){
+        string_num = '0' + string_num;
+    } 
+
+    let result = "";
+    for(char of string_num){
+        result += (char == '1' ? '0' : '1'); //invert all the digits
+    }
+    return result;
+}
+
+
 // function Register takes in input register string in form "Rnum" and return corresponding binary representation
 function Register(token){    
     // Check it is in correct formst
@@ -124,15 +140,13 @@ function Immediate(token, format){
                 // positive number, no need to convert to twos complement
                 return immOut.toString(2).padStart(format, '0');
             } else if (immOut >= -16 && immOut < 0) {
-                // ~ flips the bits of the number, therefore number is made positive, bits are flipped, number becomes negative therefore it is made positive again, then 1 is added
-                immOut = Math.abs(immOut);
-                return (Math.abs(~immOut) + 1).toString(2).padStart(format, '1');
+                return twosComplementConversion(immOut).padStart(format, '1');
             } else {
                 throw new ImmOutRangeError(-16, 15);
             }
         } else if (format == 8) {
             let immOut = Number(token.replace("#",""));
-            if (immOut >= 0 || immOut <= 255) {
+            if (immOut >= 0 && immOut <= 255) {
                 return immOut.toString(2).padStart(format, '0');
             } else {
                 throw new ImmOutRangeError(0, 255);
@@ -194,10 +208,9 @@ function OpCodeResolver(Line){
                     errors.push(error);
                 }
             } else if (instruction[i] == "Op") {
-                let operand = tokens.filter(function(_value, index, _arr){
+                let operand = tokens.filter(function(value, index, arr){
                     return index > 1;
                 });
-
                 try {
                     output += Operand(operand);
                 } catch (error) {
