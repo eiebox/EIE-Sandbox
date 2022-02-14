@@ -143,7 +143,6 @@ function runAssembler(){
     Message = "";
     document.getElementById('AssemblyOutput').style.color = 'white';
     let InputText = document.getElementById('AssemblyInput').value.toUpperCase();
-    console.log(InputText);
     localStorage.setItem('input', InputText);
     InputText = InputText.split('\n');
     for(let i in InputText){

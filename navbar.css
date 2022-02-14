@@ -153,4 +153,18 @@ html, body {
     display: block;
 }
 
+#FooterInfo{
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    background-color: #444444;
+    color: white;
+    text-align: center;
+    font-family: monospace;
+}
+
+#FooterDiv{
+    align-items: center;
+}
 /* end of Navigation Bar stuff */
