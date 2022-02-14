@@ -306,3 +306,7 @@ input:checked + .slider {
 #tc {
     position: absolute;
 }
+
+.highlightError {
+    text-decoration: underline wavy red;
+}
