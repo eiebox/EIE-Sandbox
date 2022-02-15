@@ -1,21 +1,5 @@
-/*
-potential approach:
-split line into arrays of tokens
-separate functions to assemble different ALU, JMP and LDR/STR instructions
-ALU:
-    check whether there is 1 or 2 registers to determine whether to use Imm8 or Imm5
-    for Imm5 deal with 2's complement
-
-    make dict to map opcodes to binary values 
-
-JMP:
-    use dict mapping
-    deal with OP and Ra??
-
-Other possible improvement is to encode values to be accepted in the opcodes
-
-Convert registers by chopping R off and converting number to binary
-*/
+// HTML consts
+const AssemblyInput = document.getElementById("AssemblyInput");
 
 class AssemblerError extends Error {
     constructor(message, token) {
@@ -183,6 +167,7 @@ function Operand(token){
 var Message = "";
 var CurrentLine = "";
 var outputEncoding = 2;
+var numLines = 1;
 
 function OpCodeResolver(Line){
     // formatting line to extract individual tokens
@@ -349,7 +334,14 @@ function LoadData(){
 /*
 TODO add action listener for text area that is called everytime text area is updated
 counts how many \n there are and adjusts spans in div LineNumbers accordinagly
-
-action listener possible solution
-https://stackoverflow.com/questions/20985239/can-i-put-an-actionlistener-on-a-textarea
 */
+
+AssemblyInput.addEventListener("input", (event) => {
+    
+    let numNewlines = (AssemblyInput.value.match(/\n/g) || []).length + 1;
+    
+    if (numNewlines > numLines){
+        
+    }
+    // update global variable
+});
