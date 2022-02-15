@@ -306,3 +306,11 @@ input:checked + .slider {
 #tc {
     position: absolute;
 }
+
+/* ERROR HIGHLIGHTING DON'T DELETE THIS */
+
+.highlightError {
+    text-decoration: underline wavy red;
+}
+
+/* END OF ERROR HIGHLIGHTING*/
