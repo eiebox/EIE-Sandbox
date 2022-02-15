@@ -189,17 +189,7 @@
     }
 }
 
-textarea {
-    text-transform: uppercase;
-}
 
-textarea, .textArea {
-    width: 100%;
-    height: 100%;
-    margin: 0 .15em;
-    padding: 5px;
-    font-size: 1.5em;
-}
 .slider {
     border-radius: 5px;
     width: 40px;
@@ -217,9 +207,7 @@ textarea, .textArea {
     left: -8px;
     transition: 0.4s;
 }
-.TextAreas{
-    display: flex;
-}
+
 h1{
     font-family: monospace;
     font-weight: lighter;
@@ -241,21 +229,61 @@ button {
     display: inline-block;
     font-family: monospace;
 }
-textarea, .textArea {
+
+/* TEXT AREA STUFF */
+
+.TextAreas{
+    display: flex;
+    color: white;
+    font-family: monospace;    
+    font-size: 1.5em;
+}
+
+textarea.textAres  {
+    text-transform: uppercase;
+}
+
+.textArea {
+    width: 100%;
+    height: 100%;
+    margin: 0 .15em;
+    padding: 5px;    
     resize: none;
     border: 1px solid black;
+
+    font-size: inherit;
+    color: inherit;
+
     background-color: #222222;
-    color: white;
-    font-family: monospace;
 }
-textarea:focus{
-    outline: none;
-    border-color: #349;
-}
+
 .textArea:focus{
     outline: none;
     border-color: #349;
 }
+
+/* LINE NUMBER */
+
+.textInput {
+    display: flex;
+    flex-direction: row;
+}
+
+.lineNumbers {
+    display: flex;
+    
+    /* value from text area */
+    margin: 0 .15em 0;
+    padding: 5px 0 0 0;  
+    flex-direction: column;
+    color: white;
+    font: inherit;
+}
+
+/* END OF LINE NUMBERS*/
+
+/* END OF TEXT AREA */
+
 .AssemblerControls {
     justify-content: flex-start;
     align-items: center;
@@ -314,3 +342,4 @@ input:checked + .slider {
 }
 
 /* END OF ERROR HIGHLIGHTING*/
+

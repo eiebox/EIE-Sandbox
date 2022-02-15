@@ -345,3 +345,11 @@ function LoadData(){
         }
     }
 }
+
+/*
+TODO add action listener for text area that is called everytime text area is updated
+counts how many \n there are and adjusts spans in div LineNumbers accordinagly
+
+action listener possible solution
+https://stackoverflow.com/questions/20985239/can-i-put-an-actionlistener-on-a-textarea
+*/

@@ -65,7 +65,13 @@
         
     </div>
     <div class="TextAreas">
-        <textarea id="AssemblyInput" rows="10" spellcheck="false">MOV R0, R1</textarea>    
+        <div id="InputDiv" class="textInput">
+            <div id="lineNumbers" class="lineNumbers">
+                <span>1.</span>
+                <span>2.</span>
+            </div>
+            <textarea id="AssemblyInput" class="textArea" rows="10" spellcheck="false">MOV R0, R1</textarea>   
+        </div> 
         <div readonly href="#" id="AssemblyOutput" class="textArea" rows="10" tabindex="0">0b0000000000100000</div>   
     </div> 
     <button class="assemblerbtn" type="button" onclick="runAssembler();">Run Assembler</button>
