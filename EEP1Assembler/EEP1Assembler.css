@@ -247,6 +247,7 @@ textarea.textArea  {
 div.textArea {
     overflow-y: auto;
     overflow-x: auto;
+    white-space: nowrap;
 }
 
 .textArea {
@@ -290,7 +291,7 @@ div.textArea {
     padding: 5px 0 0 0;     /* values from text area */
     min-width: 1.5em;
 
-    color: #008f00;
+    color: rgb(126, 126, 126);
     font: inherit;
     text-align: center;
 }

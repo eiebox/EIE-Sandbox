@@ -179,7 +179,7 @@ function OpCodeResolver(Line){
     let tokens = Line.replace(/,/g,"").trim().split(" ");
     let output = "";
 
-    console.log(tokens);
+    //console.log(tokens);
 
     if (Object.keys(OPCODES).includes(tokens[0])){
         let errors = [];
@@ -260,9 +260,9 @@ function runAssembler(){
             try{
                 Message += `${OpCodeResolver(InputText[i])}\n`;
             }catch(errs){
-                //document.getElementById("AssemblyOutput").style.color = "red";
+                Message += `Error on line ${lineCounter}: "`;
+                
                 if(errs.length > 0) {                    
-                    Message += `Error on line ${i}: "`;
                     // copy current line in ouput as a bunch of spans with id same as posisiton and line                    
                     splitLine = InputText[i].replace(/,/g,"").trim().split(" "); // extracting tokens
                     splitLine.push(" "); // add trailing white space for any missing tokens
@@ -289,9 +289,11 @@ function runAssembler(){
                     Message += '\n';
                 }
                 else {
-                    Message += `Error on line ${i}: ${errs.message}\n`;
+                    Message += `${errs.message}\n`;
                 }
             }
+            // separate counter to keep track of lines of actual code
+            lineCounter++;
         } else {
             Message += '\n';
         }
@@ -356,7 +358,6 @@ function updateLines(){
     let InputText = AssemblyInput.value.split('\n');
     let numNewlines = InputText.length;
     
-    console.log(numNewlines + " " + numLines);
     if (numNewlines > numLines){
         for(let i = numLines; i < numNewlines; i++){
             // add spans 
@@ -365,7 +366,7 @@ function updateLines(){
             lineNumberDiv.appendChild(newSpan);
         }
     } else if (numNewlines < numLines){
-        for(let i = numNewlines; i >= numLines; i--){
+        for(let i = numLines - 1; i >= numNewlines; i--){
             document.getElementById(i).remove();
         }
     }
@@ -376,13 +377,15 @@ function updateLines(){
     // set the innerHTML of the spans to allow for white spaces
     let lineCounter = 0;
     for(let i = 0; i < numLines; i++){
-        if(InputText[i-1] == ""){
+        if(InputText[i] == ""){
             document.getElementById(i).innerHTML = '|';
         } else {
             document.getElementById(i).innerHTML = lineCounter;
             lineCounter++;
         }
     }
+
+    // Run assembler function could be run from here everytime the user inputs some new text
 }
 
 // synchronize scrolling
