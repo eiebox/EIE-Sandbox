@@ -1,21 +1,10 @@
-/*
-potential approach:
-split line into arrays of tokens
-separate functions to assemble different ALU, JMP and LDR/STR instructions
-ALU:
-    check whether there is 1 or 2 registers to determine whether to use Imm8 or Imm5
-    for Imm5 deal with 2's complement
+// HTML consts
+const AssemblyInput = document.getElementById("AssemblyInput");
+const lineNumberDiv = document.getElementById('lineNumbers');
+const AssemblyOutput = document.getElementById("AssemblyOutput")
 
-    make dict to map opcodes to binary values 
-
-JMP:
-    use dict mapping
-    deal with OP and Ra??
-
-Other possible improvement is to encode values to be accepted in the opcodes
-
-Convert registers by chopping R off and converting number to binary
-*/
+// synchronize scrolling array
+let syncScroll = [AssemblyInput, lineNumberDiv, AssemblyOutput];
 
 class AssemblerError extends Error {
     constructor(message, token) {
@@ -183,13 +172,14 @@ function Operand(token){
 var Message = "";
 var CurrentLine = "";
 var outputEncoding = 2;
+var numLines = 0;
 
 function OpCodeResolver(Line){
     // formatting line to extract individual tokens
     let tokens = Line.replace(/,/g,"").trim().split(" ");
     let output = "";
 
-    console.log(tokens);
+    //console.log(tokens);
 
     if (Object.keys(OPCODES).includes(tokens[0])){
         let errors = [];
@@ -258,18 +248,21 @@ function OpCodeResolver(Line){
 
 function runAssembler(){
     Message = "";
-    document.getElementById("AssemblyOutput").style.color = "white";
-    let InputText = document.getElementById('AssemblyInput').value.toUpperCase();
+    AssemblyOutput.style.color = "white";
+    let InputText = AssemblyInput.value.toUpperCase();
     localStorage.setItem('input2', InputText);
+
     InputText = InputText.split('\n');
+
+    let lineCounter = 0;
     for(i in InputText){
         if(InputText[i] != ""){
             try{
                 Message += `${OpCodeResolver(InputText[i])}\n`;
             }catch(errs){
-                //document.getElementById("AssemblyOutput").style.color = "red";
+                Message += `Error on line ${lineCounter}: "`;
+                
                 if(errs.length > 0) {                    
-                    Message += `Error on line ${i}: "`;
                     // copy current line in ouput as a bunch of spans with id same as posisiton and line                    
                     splitLine = InputText[i].replace(/,/g,"").trim().split(" "); // extracting tokens
                     splitLine.push(" "); // add trailing white space for any missing tokens
@@ -278,7 +271,6 @@ function runAssembler(){
                     for(e in errs){
                         errTokens.push(errs[e].errToken);
                     }
-
                     
                     for(tok of splitLine){
                         let pos = InputText[i].indexOf(tok);
@@ -297,16 +289,20 @@ function runAssembler(){
                     Message += '\n';
                 }
                 else {
-                    Message += `Error on line ${i}: ${errs.message}\n`;
+                    Message += `${errs.message}\n`;
                 }
             }
+            // separate counter to keep track of lines of actual code
+            lineCounter++;
+        } else {
+            Message += '\n';
         }
     }
     Message = Message.replace(/\n/g, '<br>');
     localStorage.setItem('message2', Message);
     localStorage.setItem('encoding2', outputEncoding);
-    localStorage.setItem('textcolor2', document.getElementById('AssemblyOutput').style.color);
-    document.getElementById('AssemblyOutput').innerHTML = Message;
+    localStorage.setItem('textcolor2', AssemblyOutput.style.color);
+    AssemblyOutput.innerHTML = Message;
 }
 
 //function that is run when toggle is clicked
@@ -344,4 +340,60 @@ function LoadData(){
             runAssembler();
         }
     }
+
+    updateLines();
+        
+    // Action listener for text area
+    AssemblyInput.addEventListener("input", updateLines);
+
+    // add action listener for synchronized scrolling
+    for(elem of syncScroll){
+        elem.addEventListener("scroll",syncScrollFunc);
+    }
 }
+
+
+// function that update the lines numbers
+function updateLines(){
+    let InputText = AssemblyInput.value.split('\n');
+    let numNewlines = InputText.length;
+    
+    if (numNewlines > numLines){
+        for(let i = numLines; i < numNewlines; i++){
+            // add spans 
+            let newSpan = document.createElement('span')
+            newSpan.setAttribute('id',i); 
+            lineNumberDiv.appendChild(newSpan);
+        }
+    } else if (numNewlines < numLines){
+        for(let i = numLines - 1; i >= numNewlines; i--){
+            document.getElementById(i).remove();
+        }
+    }
+
+    // update global variable
+    numLines = numNewlines;
+
+    // set the innerHTML of the spans to allow for white spaces
+    let lineCounter = 0;
+    for(let i = 0; i < numLines; i++){
+        if(InputText[i] == ""){
+            document.getElementById(i).innerHTML = '|';
+        } else {
+            document.getElementById(i).innerHTML = lineCounter;
+            lineCounter++;
+        }
+    }
+
+    // Run assembler function could be run from here everytime the user inputs some new text
+}
+
+// synchronize scrolling
+function syncScrollFunc(){
+    let top = this.scrollTop;
+
+    for(elem of syncScroll){
+        elem.scrollTop = top;
+    }
+}
+
