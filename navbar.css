@@ -162,9 +162,24 @@ html, body {
     color: white;
     text-align: center;
     font-family: monospace;
+    font-size: 2em;
+    text-decoration: none;
 }
 
 #FooterDiv{
+    margin: 10px;
     align-items: center;
 }
+
+#FooterDiv > a{
+    color: inherit;
+    transition: 0.1s;
+}
+
+
+#FooterDiv > a:hover{
+    color: #777777;
+    transition: 0.1s;
+}
+
 /* end of Navigation Bar stuff */
