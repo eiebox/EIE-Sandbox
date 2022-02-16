@@ -329,19 +329,33 @@ function LoadData(){
             runAssembler();
         }
     }
+
+    updateLines();
 }
 
-/*
-TODO add action listener for text area that is called everytime text area is updated
-counts how many \n there are and adjusts spans in div LineNumbers accordinagly
-*/
+// Action listener for text area
+AssemblyInput.addEventListener("input", updateLines);
 
-AssemblyInput.addEventListener("input", (event) => {
-    
+function updateLines(){
     let numNewlines = (AssemblyInput.value.match(/\n/g) || []).length + 1;
+
+    const lineNumberDiv = document.getElementById('lineNumbers');
     
     if (numNewlines > numLines){
-        
+        for(let i = numLines + 1; i <= numNewlines; i++){
+            // add spans 
+            let newSpan = document.createElement('span')
+            newSpan.setAttribute('id',i); 
+            newSpan.innerHTML = i;
+            lineNumberDiv.appendChild(newSpan);
+        }
+    } else if (numNewlines < numLines){
+        for(let i = numLines; i > numNewlines; i--){
+            document.getElementById(i).remove();
+        }
     }
+
     // update global variable
-});
+    numLines = numNewlines;
+}
+

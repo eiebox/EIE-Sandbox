@@ -270,14 +270,16 @@ textarea.textAres  {
 }
 
 .lineNumbers {
-    display: flex;
+    display: flex;    
+    flex-direction: column;
     
-    /* value from text area */
+    /* values from text area */
     margin: 0 .15em 0;
     padding: 5px 0 0 0;  
-    flex-direction: column;
-    color: white;
+    
+    color: #008f00;
     font: inherit;
+    text-align: right;
 }
 
 /* END OF LINE NUMBERS*/
