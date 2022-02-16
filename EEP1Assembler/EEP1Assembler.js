@@ -1,7 +1,7 @@
 // HTML consts
-const AssemblyInput = document.getElementById("AssemblyInput");
+const AssemblyInput = document.getElementById('AssemblyInput');
 const lineNumberDiv = document.getElementById('lineNumbers');
-const AssemblyOutput = document.getElementById("AssemblyOutput")
+const AssemblyOutput = document.getElementById('AssemblyOutput');
 
 // synchronize scrolling array
 let syncScroll = [AssemblyInput, lineNumberDiv, AssemblyOutput];
@@ -15,37 +15,37 @@ class AssemblerError extends Error {
 
 class InvalidOpcodeError extends AssemblerError {
     constructor(token) {
-        super('Invalid Opcode!',token);
+        super('Invalid Opcode!\n', token);
     }
 }
 
 class OperandSizeError extends AssemblerError {
     constructor(expectedNumOperands, receivedNumOperands,token) {
         if (receivedNumOperands > expectedNumOperands) {
-            super(`Too many Operands! Expected ${expectedNumOperands} but read ${receivedNumOperands}`,token);
+            super(`Too many Operands!\nExpected ${expectedNumOperands} but read ${receivedNumOperands}`, token);
         }
         else if (receivedNumOperands < expectedNumOperands) {
-            super(`Not enough Operands! Expected ${expectedNumOperands} but read ${receivedNumOperands}`,token);
+            super(`Not enough Operands!\nExpected ${expectedNumOperands} but read ${receivedNumOperands}`, token);
         }
-        else super('Unknown operand size error',token);
+        else super('Unknown operand size error', token);
     }
 }
 
 class ImmOutRangeError extends AssemblerError {
     constructor(minVal, maxVal,token) {
-        super(`Immediate Operand Invalid! Value must be between ${minVal} and ${maxVal}`,token);
+        super(`Immediate Operand Invalid!\nValue must be between ${minVal} and ${maxVal}`,token);
     }
 }
 
 class RegOutRangeError extends AssemblerError {
     constructor(maxVal,token) {
-        super(`Register Number Invalid! Maximum Value ${maxVal}`,token);
+        super(`Register Number Invalid!\nMaximum Value ${maxVal}`,token);
     }
 }
 
 class InvalidInputError extends AssemblerError {
     constructor(expectedFormat,token) {
-        super(`Input invalid! Expected ${expectedFormat}`,token);
+        super(`Input invalid!\nExpected ${expectedFormat}`,token);
     }
 }
 
@@ -104,23 +104,28 @@ function twosComplementConversion(negative_num){
 
 // function Register takes in input register string in form "Rnum" and return corresponding binary representation
 function Register(token){    
-    // Check it is in correct formst
-    if(token[0] == "R"){
-        let regNum = Number(token.replace("R",""));
-        // check register is correct size
-        if (regNum < REGISTER_COUNT && regNum >= 0){
-            return regNum.toString(2).padStart(REGISTER_BITS, "0");
+    // check if token is actually defined
+    if(token) {
+        // Check it is in correct formst
+        if(token.length > 1 && token[0] == "R") {
+            let regNum = Number(token.replace("R",""));
+            // check register is correct size
+            if (regNum < REGISTER_COUNT && regNum >= 0) {
+                return regNum.toString(2).padStart(REGISTER_BITS, "0");
+            } else {
+                throw new RegOutRangeError(REGISTER_COUNT - 1, token);
+            }
         } else {
-            throw new RegOutRangeError(REGISTER_COUNT - 1,token);
+            throw new InvalidInputError('a register', token);
         }
     } else {
-        throw new InvalidInputError('a register',token);
+        throw new InvalidInputError('a register', ' ');
     }
 }
 
 // function Immediates convert #Imms5 and #Imm8 to binary representation, 
 function Immediate(token, format){
-    if (token[0] == "#"){
+    if (token.length > 1 && token[0] == "#"){
         if (format == 5) {
             let immOut = Number(token.replace("#",""));
             if (immOut <= 15 && immOut >= 0) {
@@ -169,10 +174,10 @@ function Operand(token){
 
 
 // Globals
-var Message = "";
-var CurrentLine = "";
-var outputEncoding = 2;
-var numLines = 0;
+let Message = "";
+let CurrentLine = "";
+let outputEncoding = 2;
+let numLines = 0;
 
 function OpCodeResolver(Line){
     // formatting line to extract individual tokens
@@ -245,6 +250,13 @@ function OpCodeResolver(Line){
     }
 }
 
+function generatePopupHTML(error, id) {
+    const popupSpan = document.createElement('span');
+    popupSpan.setAttribute('id', id);
+    popupSpan.setAttribute('class', 'popupError');
+    popupSpan.innerHTML = error.message.replace(/\n/g,'<br>');
+    return popupSpan;
+}
 
 function runAssembler(){
     Message = "";
@@ -259,33 +271,35 @@ function runAssembler(){
         if(InputText[i] != ""){
             try{
                 Message += `${OpCodeResolver(InputText[i])}\n`;
-            }catch(errs){
-                Message += `Error on line ${lineCounter}: "`;
+            } catch(errs) {
+
+                Message += `<span class="errorText">Error at address ${lineCounter}: </span>`;
                 
-                if(errs.length > 0) {                    
+                if(errs.length > 0) {
                     // copy current line in ouput as a bunch of spans with id same as posisiton and line                    
                     splitLine = InputText[i].replace(/,/g,"").trim().split(" "); // extracting tokens
                     splitLine.push(" "); // add trailing white space for any missing tokens
-
-                    let errTokens = [];
-                    for(e in errs){
-                        errTokens.push(errs[e].errToken);
-                    }
+                    // [ "MOV", "R0", "#", " " ]
                     
-                    for(tok of splitLine){
-                        let pos = InputText[i].indexOf(tok);
+                    for(let [i2, tok] of splitLine.entries()){
+                        let pos = InputText[i].indexOf(tok) + 1; // so that if tok not in array (white space not found) pos is 0 rather than -1                   
 
-                        // check if token is an error
-                        if(errTokens.includes(tok)){
+                        let errorSpan = document.createElement('span');
+                       
+                        if(errs[0] && errs[0].errToken === tok) {
                             // strange solution to display white space in span
-                            tok = (tok == " ") ? '&nbsp;' : tok;
-                            Message += `<span id="${i}.${pos}" class="highlightError">${tok}</span> `;
+                            tok = (tok == " ") ? '&nbsp;' : tok;                            
+                            errorSpan.setAttribute('class', 'highlightError');
+                            errorSpan.setAttribute('id', `error${i}${pos}`);                  
+                            errorSpan.appendChild(generatePopupHTML(errs.shift(), `popup${i}${pos}`)) // send first error object from array to function, then remove the element
                         } else {
-                            Message += `<span id="${i}.${pos}">${tok}</span> `;
+                            errorSpan.setAttribute('id', `${i}${pos}`);
                         }
+                                 
+                        errorSpan.innerHTML += tok;
+                        Message += errorSpan.outerHTML;
+                        Message += i2 < splitLine.length - 1 ? ' ' : '';
                     }
-                    
-                    Message += '"';
                     Message += '\n';
                 }
                 else {
@@ -386,6 +400,7 @@ function updateLines(){
     }
 
     // Run assembler function could be run from here everytime the user inputs some new text
+    runAssembler();
 }
 
 // synchronize scrolling
@@ -396,4 +411,3 @@ function syncScrollFunc(){
         elem.scrollTop = top;
     }
 }
-

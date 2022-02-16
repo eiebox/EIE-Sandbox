@@ -271,11 +271,6 @@ div.textArea {
 
 /* LINE NUMBER */
 
-.textInput {
-    display: flex;
-    flex-direction: row;
-    width: 100%;
-}
 
 .lineNumbers {
     height: 100%;
@@ -287,7 +282,7 @@ div.textArea {
     -ms-overflow-style: none;   /* IE and Edge */
     scrollbar-width: none;      /* Firefox */
     
-    margin: 0 .15em 0 0;      /* values from text area */
+    margin: 0;      /* values from text area */
     padding: 5px 0 0 0;     /* values from text area */
     min-width: 1.5em;
 
@@ -360,7 +355,66 @@ input:checked + .slider {
 
 .highlightError {
     text-decoration: underline wavy red;
+    padding: 0px 2px 0px 2px;
+    border: 1px solid transparent;
+
+    /* To make the popup (position absolute) appear properly */
+    position: relative;
 }
+
+.highlightError:hover {
+    border: 1px solid red;
+    text-decoration: none;
+    background-color: rgba(255, 115, 115, 0.233);
+    border-radius: 6px;
+
+}
+
+
+.errorText {
+    font-style: italic;
+}
+
+/* POPUP */
+
+.highlightError:hover .popupError{
+    visibility: visible;
+    animation: fadeIn 0.2s;
+}
+
+@keyframes fadeIn {
+    from {opacity: 0;} 
+    to {opacity: 1;}
+}
+
+@keyframes fadeOut {
+    from {opacity: 1;}
+    to {opacity: 0;}
+}
+
+
+.popupError {
+    visibility: hidden;
+    animation: fadeOut 0.2s;
+    
+    position: absolute;
+    display: inline-block;
+    font-size: 80%;
+    top: 1.5em;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #000000;
+    padding: 5px 10px;
+    z-index: 1;
+    border-radius: 15px;
+    border: thin dashed #ffe600;
+
+    box-shadow: 10px 10px 20px black;
+
+    text-align: center;
+}
+
+/* END POPUP */
 
 /* END OF ERROR HIGHLIGHTING*/
 
