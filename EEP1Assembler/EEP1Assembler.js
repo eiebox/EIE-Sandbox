@@ -1,5 +1,10 @@
 // HTML consts
 const AssemblyInput = document.getElementById("AssemblyInput");
+const lineNumberDiv = document.getElementById('lineNumbers');
+const AssemblyOutput = document.getElementById("AssemblyOutput")
+
+// synchronize scrolling array
+let syncScroll = [AssemblyInput, lineNumberDiv, AssemblyOutput];
 
 class AssemblerError extends Error {
     constructor(message, token) {
@@ -167,7 +172,7 @@ function Operand(token){
 var Message = "";
 var CurrentLine = "";
 var outputEncoding = 2;
-var numLines = 1;
+var numLines = 0;
 
 function OpCodeResolver(Line){
     // formatting line to extract individual tokens
@@ -243,10 +248,13 @@ function OpCodeResolver(Line){
 
 function runAssembler(){
     Message = "";
-    document.getElementById("AssemblyOutput").style.color = "white";
-    let InputText = document.getElementById('AssemblyInput').value.toUpperCase();
+    AssemblyOutput.style.color = "white";
+    let InputText = AssemblyInput.value.toUpperCase();
     localStorage.setItem('input2', InputText);
+
     InputText = InputText.split('\n');
+
+    let lineCounter = 0;
     for(i in InputText){
         if(InputText[i] != ""){
             try{
@@ -263,7 +271,6 @@ function runAssembler(){
                     for(e in errs){
                         errTokens.push(errs[e].errToken);
                     }
-
                     
                     for(tok of splitLine){
                         let pos = InputText[i].indexOf(tok);
@@ -285,13 +292,15 @@ function runAssembler(){
                     Message += `Error on line ${i}: ${errs.message}\n`;
                 }
             }
+        } else {
+            Message += '\n';
         }
     }
     Message = Message.replace(/\n/g, '<br>');
     localStorage.setItem('message2', Message);
     localStorage.setItem('encoding2', outputEncoding);
-    localStorage.setItem('textcolor2', document.getElementById('AssemblyOutput').style.color);
-    document.getElementById('AssemblyOutput').innerHTML = Message;
+    localStorage.setItem('textcolor2', AssemblyOutput.style.color);
+    AssemblyOutput.innerHTML = Message;
 }
 
 //function that is run when toggle is clicked
@@ -331,31 +340,57 @@ function LoadData(){
     }
 
     updateLines();
+        
+    // Action listener for text area
+    AssemblyInput.addEventListener("input", updateLines);
+
+    // add action listener for synchronized scrolling
+    for(elem of syncScroll){
+        elem.addEventListener("scroll",syncScrollFunc);
+    }
 }
 
-// Action listener for text area
-AssemblyInput.addEventListener("input", updateLines);
 
+// function that update the lines numbers
 function updateLines(){
-    let numNewlines = (AssemblyInput.value.match(/\n/g) || []).length + 1;
-
-    const lineNumberDiv = document.getElementById('lineNumbers');
+    let InputText = AssemblyInput.value.split('\n');
+    let numNewlines = InputText.length;
     
+    console.log(numNewlines + " " + numLines);
     if (numNewlines > numLines){
-        for(let i = numLines + 1; i <= numNewlines; i++){
+        for(let i = numLines; i < numNewlines; i++){
             // add spans 
             let newSpan = document.createElement('span')
             newSpan.setAttribute('id',i); 
-            newSpan.innerHTML = i;
             lineNumberDiv.appendChild(newSpan);
         }
     } else if (numNewlines < numLines){
-        for(let i = numLines; i > numNewlines; i--){
+        for(let i = numNewlines; i >= numLines; i--){
             document.getElementById(i).remove();
         }
     }
 
     // update global variable
     numLines = numNewlines;
+
+    // set the innerHTML of the spans to allow for white spaces
+    let lineCounter = 0;
+    for(let i = 0; i < numLines; i++){
+        if(InputText[i-1] == ""){
+            document.getElementById(i).innerHTML = '|';
+        } else {
+            document.getElementById(i).innerHTML = lineCounter;
+            lineCounter++;
+        }
+    }
+}
+
+// synchronize scrolling
+function syncScrollFunc(){
+    let top = this.scrollTop;
+
+    for(elem of syncScroll){
+        elem.scrollTop = top;
+    }
 }
 
