@@ -15,7 +15,7 @@ class AssemblerError extends Error {
 
 class InvalidOpcodeError extends AssemblerError {
     constructor(token) {
-        super('Invalid Opcode!\n', token);
+        super('Invalid Opcode!', token);
     }
 }
 
