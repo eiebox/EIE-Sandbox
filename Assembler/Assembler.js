@@ -76,7 +76,7 @@ function runAssembler(){
 					} catch(errs) {
 							console.log(errs);
 
-							Message += `<span class="errorText">Error at address ${lineCounter}: </span>`;
+							Message += `<span class="errorText">Error: </span>`;
 							
 							if(errs.length > 0) {
 								// copy current line in ouput as a bunch of spans with id same as posisiton and line                    

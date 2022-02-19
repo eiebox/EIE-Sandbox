@@ -76,7 +76,7 @@ function Register(token){
 
 // function Immediates convert #Imms5 and #Imm8 to binary representation, 
 function Immediate(token, format){
-    if (token.length > 1 && token[0] == "#"){
+    if (token && token.length > 1 && token[0] == "#"){
         if (format == 5) {
             let immOut = Number(token.replace("#",""));
             if (immOut <= 15 && immOut >= 0) {
@@ -98,7 +98,7 @@ function Immediate(token, format){
             throw new AssemblerError('Programmer made a mistake!',token);
         }
     } else {
-        throw new InvalidInputError('an immediate (with #)',token);
+        throw new InvalidInputError('an immediate (with #)',(token ? token : ' ')); //throw whitespace if not defined
     }
 }
 
@@ -128,11 +128,12 @@ export function OpCodeResolver(Line, encoding = 2){
     // formatting line to extract individual tokens
     let tokens = Line.replace(/,/g,"").trim().split(" ");
     let output = "";
+    let errors = [];
 
     //console.log(tokens);
 
     if (Object.keys(OPCODES).includes(tokens[0])){
-        let errors = [];
+        
 
         let instruction = OPCODES[tokens[0]];
 
@@ -191,7 +192,8 @@ export function OpCodeResolver(Line, encoding = 2){
         
         return "0b" + output;
     } else {
-        throw new InvalidOpcodeError(tokens[0]); // catch in runAssembler expecting error array.
+        errors.push(new InvalidOpcodeError(tokens[0])); // catch in runAssembler expecting error array.
+        throw errors; 
     }
 }
 

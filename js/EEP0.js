@@ -1,3 +1,5 @@
+import { AssemblerError, InvalidOpcodeError, OperandSizeError, ImmOutRangeError, InvalidInputError, RegOutRangeError} from "../js/errorClasses.js";
+
 const ConversionDictOpcode = {
     'MOV': '000',
     'ADD': '001',
@@ -21,6 +23,7 @@ const ConversionDictRegister = {
     'R3': '11'
 }
 
+/*
 class AssemblerError extends Error {
     constructor(message, vertPos) {
         super(message);
@@ -57,17 +60,21 @@ class InvalidInputError extends AssemblerError {
         super(`Input invalid! Expected ${expectedFormat}`, vertPos);
     }
 }
+*/
 
 export function OpCodeResolver(Line, encoding) {
     let errorsEncountered = [];
 
-    Line = Line.replace(/,/g,''); // if replace pattern is of type string, only the first occurence is replaced, this REGEX replaces all occurences.
-    Line = Line.trim();
-    Line = Line.split(' ');
+    Line = Line
+            .replace(/,/g,"")
+            .trim()
+            .split(" "); 
+            // if replace pattern is of type string, only the first occurence is replaced, this REGEX replaces all occurences.
+
     if (ConversionDictOpcode[Line[0]] != undefined) {
         Line[0] = ConversionDictOpcode[Line[0]];
         if (Line.length != 3) {
-            errorsEncountered.push(new OperandSizeError(1, 2, Line.length - 1)); // error is whole line as too many operands were entered
+            errorsEncountered.push(new InvalidInputError('2 operands', ' ')); // error is blank space since size is unknown
         }
         else{
             if(ConversionDictRegister[Line[1]] != undefined) {
@@ -85,14 +92,14 @@ export function OpCodeResolver(Line, encoding) {
                         Line[1] = "1".concat(Line[1]);
                     }
                     else {
-                        errorsEncountered.push(new ImmOutRangeError(2, 0, 255));
+                        errorsEncountered.push(new ImmOutRangeError(0, 255, `#${Line[2]}`));
                     }
                 }
                 else {
-                    errorsEncountered.push(new InvalidInputError(2, 'a register or an immediate'));
+                    errorsEncountered.push(new InvalidInputError('a register or an immediate', Line[2]));
                 }
             } else {
-                errorsEncountered.push(new InvalidInputError(1, 'a register'));
+                errorsEncountered.push(new RegOutRangeError(3, Line[1]));
             }
         }
     }
@@ -100,7 +107,7 @@ export function OpCodeResolver(Line, encoding) {
         Line[0] = ConversionDictOpcodeJMP[Line[0]];
         Line[0] = `${Line[0]}0000`;
         if (Line.length != 2) {
-            errorsEncountered.push(new OperandSizeError(1, 1, Line.length - 1));
+            errorsEncountered.push(new OperandSizeError(1, 1, ' '));
         }
         else {
             if(Line[1][0] == '#'){
@@ -111,16 +118,16 @@ export function OpCodeResolver(Line, encoding) {
                     for(Line[1]; Line[1].length < 8; Line[1] = "0".concat(Line[1]));
                 }
                 else {
-                    errorsEncountered.push(new ImmOutRangeError(1, 0, 255));
+                    errorsEncountered.push(new ImmOutRangeError(0, 255, `#${Line[1]}`));
                 }
             }
             else{
-                errorsEncountered.push(new InvalidInputError(1, 'an immediate'));
+                errorsEncountered.push(new InvalidInputError('an immediate', Line[1]));
             }
         }
     }
     else {
-        errorsEncountered.push(new InvalidOpcodeError(1, Line[0]));
+        errorsEncountered.push(new InvalidOpcodeError(Line[0]));
     }
 
     if(errorsEncountered.length > 0) throw errorsEncountered;

@@ -262,6 +262,8 @@ div.textArea {
     color: inherit;
 
     background-color: #222222;
+
+    position: relative;
 }
 
 .textArea:focus{
@@ -405,7 +407,7 @@ input:checked + .slider {
     transform: translateX(-50%);
     background-color: #000000;
     padding: 5px 10px;
-    z-index: 1;
+    z-index: 100;
     border-radius: 15px;
     border: thin dashed #ffe600;
 
