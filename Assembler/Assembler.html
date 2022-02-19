@@ -4,14 +4,14 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="format-detection" content="telephone=no" />
-    <link rel="stylesheet" href="EEP1Assembler.css"> 
+    <link rel="stylesheet" href="../css/assembler.css"> 
 <!-- START NAVBAR STYLING-->
-    <link rel="stylesheet" href="../navbar.css">    
+    <link rel="stylesheet" href="../css/navbar.css">    
     <!-- Style for the dropdown thing-->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 <!-- END NAVBAR STYLING-->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EEP1 Assembler</title>
+    <title id="HeadTitle">EEP1 Assembler</title>
     <!-- Global site tag (gtag.js) - Google Analytics-->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-1G85960FGM"></script>
     <script>
@@ -23,7 +23,7 @@
     <!--End of Google Analytics-->
 </head>
 <!-- START OF NAVBAR STUFF -->
-<body style="background-color: #333333;" onload="LoadData();">
+<body style="background-color: #333333;" onload="onLoadFunc();">
     <header class="PageHeader">
         <div class="TopNavBar">
             <a href="../index.html"><img src="../StaticContent/Logo.svg" id="Logo"/></a>
@@ -33,8 +33,8 @@
                     [ASSEMBLERS]
                 </button>
                 <div class ="dropdown-content" id="myDropdown">
-                    <a href="../EEP1Assembler/EEP1Assembler.html">[EEP1-ASSEMBLER]</a>
-                    <a href="../EEP0Assembler/EEP0Assembler.html">[EEP0-ASSEMBLER]</a>                    
+                    <a href="../Assembler/Assembler.html?cpu=EEP1">[EEP1-ASSEMBLER]</a>
+                    <a href="../Assembler/Assembler.html?cpu=EEP0">[EEP0-ASSEMBLER]</a>                      
                 </div>
             </div>
         </div>
@@ -59,7 +59,7 @@
 
 <!-- END OF NAVBAR STUFF -->
     <div class="AssemblerControls">
-        <h1>[EEP1 - ASSEMBLER]</h1>
+        <h1 id="MiddleBarTitle">[EEP1 - ASSEMBLER]</h1>
                 
         <div class="toggle">
                 <span class="switchLabel">[BIN]</span>
@@ -81,6 +81,6 @@
         <div readonly href="#" id="AssemblyOutput" class="textArea" rows="10" tabindex="0">0b0000000000100000</div>   
     </div> 
     <button class="assemblerbtn" type="button" onclick="runAssembler();">Run Assembler</button>
-    <script src="EEP1Assembler.js"></script>
+    <script src="Assembler.js"></script>
 </body>
 </html>
