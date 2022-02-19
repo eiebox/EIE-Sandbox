@@ -125,7 +125,7 @@ function runAssembler(){
 		AssemblyOutput.innerHTML = Message;
 	})
 	.catch(err => {
-		throw err;
+		console.log(err);
 	});	
 }
 
