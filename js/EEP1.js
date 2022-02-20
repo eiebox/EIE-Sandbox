@@ -1,4 +1,4 @@
-import { AssemblerError, InvalidOpcodeError, OperandSizeError, ImmOutRangeError, InvalidInputError} from "../js/errorClasses.js";
+import { AssemblerError, InvalidOpcodeError, RegOutRangeError, OperandSizeError, ImmOutRangeError, InvalidInputError} from "../js/errorClasses.js";
 
 const REGISTER_COUNT = 8;
 const REGISTER_BITS = 3;
