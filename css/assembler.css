@@ -237,16 +237,16 @@ button {
     color: white;
     font-family: monospace;    
     font-size: 1.5em;
+    justify-content: center;
+    flex-direction: row;
+    flex-wrap: nowrap;
 }
 
 textarea.textArea  {
     text-transform: uppercase;
-    overflow-x: auto;
 }
 
 div.textArea {
-    overflow-y: auto;
-    overflow-x: auto;
     white-space: nowrap;
 }
 
@@ -262,6 +262,10 @@ div.textArea {
     color: inherit;
 
     background-color: #222222;
+
+    position: relative;
+
+    flex-grow: 1;
 }
 
 .textArea:focus{
@@ -284,11 +288,12 @@ div.textArea {
     
     margin: 0;      /* values from text area */
     padding: 5px 0 0 0;     /* values from text area */
-    min-width: 1.5em;
+    min-width: 2.5em;
 
     color: rgb(126, 126, 126);
     font: inherit;
     text-align: center;
+    width: max-content;
 }
 
 /* hide scrollabar for Chrome, Safari and Opera*/
@@ -405,7 +410,7 @@ input:checked + .slider {
     transform: translateX(-50%);
     background-color: #000000;
     padding: 5px 10px;
-    z-index: 1;
+    z-index: 100;
     border-radius: 15px;
     border: thin dashed #ffe600;
 
