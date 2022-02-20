@@ -124,13 +124,26 @@ function Operand(token){
 }
 
 
-export function OpCodeResolver(Line, encoding = 2){
+export function OpCodeResolver(Line, encoding = 2, symbolTable){
     // formatting line to extract individual tokens
     let tokens = Line.replace(/,/g,"").trim().split(" ");
     let output = "";
     let errors = [];
+    let newSymbol;
 
-    //console.log(tokens);
+    // check whether first token is symbol token (identified by : at the end)
+    if(tokens[0][tokens[0].length - 1] == ':'){
+        tokens[0] = tokens[0].replace(':','');
+        // check whether symbol has already been used
+        if(symbolTable[tokens[0]]){
+            errors.push(new AssemblerError('Symbol has already been used', tokens[0]));
+            return errors;
+        } 
+        newSymbol = tokens[0];
+        // use shift so the rest of the program can continue to work properly
+        symbolTable[tokens.shift()] = [0, false];
+        
+    }
 
     if (Object.keys(OPCODES).includes(tokens[0])){
         
@@ -142,6 +155,15 @@ export function OpCodeResolver(Line, encoding = 2){
         // needed for instructions which have arbitrary 0s and 1s
         let tokensCounter = 1;
         for (let i = 1; i < instruction.length; i++) {
+            // if a token matches with a symbol from the symbol table then it is converted
+            
+            if(Object.keys(symbolTable).includes(tokens[tokensCounter])) { //check if this is defined
+                // symbol has been used therefore it's set to true
+                symbolTable[tokens[tokensCounter]][1] = true;
+                
+                tokens[tokensCounter] = `#${symbolTable[tokens[tokensCounter]][0]}`;
+            }
+
             if (instruction[i] == "#Imm8"){
                 try {
                     output += Immediate(tokens[tokensCounter], 8);                    
@@ -178,6 +200,7 @@ export function OpCodeResolver(Line, encoding = 2){
                 // tokensCounter doesn't increment in this case since since this doens't correspond to a token
                 tokensCounter -= 1;
             }
+
             tokensCounter++;
         }
 
@@ -187,12 +210,19 @@ export function OpCodeResolver(Line, encoding = 2){
             // convert binary number back to int 
             // convert int to hex
             // make it uppercase and add leading 0s 
-            return "0x" + parseInt(output, 2).toString(16).toUpperCase().padStart(4, '0');
+            ouput =  "0x" + parseInt(output, 2).toString(16).toUpperCase().padStart(4, '0');
+        } else {
+            output = "0b" + output;
         }
         
-        return "0b" + output;
+        if (newSymbol) {
+            return [output, newSymbol];
+        } else {
+            return [output];
+        }
     } else {
-        errors.push(new InvalidOpcodeError(tokens[0])); // catch in runAssembler expecting error array.
+        // catch in runAssembler expecting error array
+        errors.push(new InvalidOpcodeError((tokens[0] ? tokens[0] : ' '))); // trick to show whitespace in output
         throw errors; 
     }
 }

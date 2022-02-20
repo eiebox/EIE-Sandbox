@@ -66,12 +66,23 @@ function runAssembler(){
 	import(`../js/${currentCPU}.js`)
 		.then(module => {	
 
+    // dictionary where key is the symbol string and the value is an array with address and boolean to keep track of its usage
+    let symbolTable = new Array();
 		let lineCounter = 0;
 		for(i in InputText){
 			if(InputText[i] != ""){
 					try{
-							//Message += `${OpCodeResolver(InputText[i])}\n`;
-							Message += `${module.OpCodeResolver(InputText[i], outputEncoding)}\n`;
+            if (currentCPU == 'EEP1') {
+              let resolvedOpCode = module.OpCodeResolver(InputText[i], outputEncoding, symbolTable);
+              if (resolvedOpCode.length > 1) {
+                // if there was a new symbol found, update the table with the line value
+                symbolTable[resolvedOpCode[1]][0] = lineCounter;
+              }
+              //console.log(symbolTable);
+              Message += `${resolvedOpCode[0]}\n`;
+            } else {
+              Message += `${module.OpCodeResolver(InputText[i], outputEncoding)}\n`;
+            }
 								
 					} catch(errs) {
 							console.log(errs);
@@ -115,6 +126,19 @@ function runAssembler(){
 					Message += '\n';
 			}
 		}
+
+    //finished going through input lines, check if all symbols have been used:
+    if (currentCPU == 'EEP1') {
+      console.log(symbolTable);
+      for(let symbol in symbolTable){
+        //console.log(symbolArr);
+        console.log(symbol);
+        if(!symbolTable[symbol][1]){
+          //symbol hasn't been used:
+          Message += `Warning: ${symbol} was never used\n`;
+        }
+      }
+    }
 
 		Message = Message.replace(/\n/g, '<br>');
 
@@ -178,7 +202,7 @@ function updateLines(){
 			if(InputText[i] == ""){
 					document.getElementById(i).innerHTML = '|';
 			} else {
-					document.getElementById(i).innerHTML = lineCounter;
+					document.getElementById(i).innerHTML = `0x${lineCounter.toString(16)}`;
 					lineCounter++;
 			}
 	}
