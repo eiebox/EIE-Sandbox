@@ -2,6 +2,7 @@
 const AssemblyInput = document.getElementById('AssemblyInput');
 const lineNumberDiv = document.getElementById('lineNumbers');
 const AssemblyOutput = document.getElementById('AssemblyOutput');
+const downloadButton = document.getElementById('downloadBttn');
 
 // synchronize scrolling array
 let syncScroll = [AssemblyInput, lineNumberDiv, AssemblyOutput];
@@ -35,6 +36,11 @@ function onLoadFunc(){
 	}
 
 	updateLines();
+
+	// ACTION LISTENERS
+
+	// action listener for downlaod button
+	downloadButton.addEventListener('click',downloadFile);
 			
 	// Action listener for text area
 	AssemblyInput.addEventListener("input", updateLines);
@@ -66,6 +72,9 @@ function runAssembler(){
 	import(`../js/${currentCPU}.js`)
 		.then(module => {	
 
+		// reset attribute value 
+		downloadButton.setAttribute('downloadable','true');
+
     // dictionary where key is the symbol string and the value is an array with address and boolean to keep track of its usage
     let symbolTable = new Array();
 		let lineCounter = 0;
@@ -85,7 +94,10 @@ function runAssembler(){
             }
 								
 					} catch(errs) {
-							console.log(errs);
+							// console.log(errs);
+
+							//errors found therefore update the download div so it doens't work
+							downloadButton.setAttribute('downloadable','false');
 
 							Message += `<span class="errorText">Error: </span>`;
 							
@@ -101,13 +113,13 @@ function runAssembler(){
 									let errorSpan = document.createElement('span');
 								
 									if(errs[0] && errs[0].errToken === tok) {
-											// strange solution to display white space in span
-											tok = (tok == " ") ? '&nbsp;' : tok;                            
-											errorSpan.setAttribute('class', 'highlightError');
-											errorSpan.setAttribute('id', `error${i}${pos}`);                  
-											errorSpan.appendChild(generatePopupHTML(errs.shift(), `popup${i}${pos}`)) // send first error object from array to function, then remove the element
+										// strange solution to display white space in span
+										tok = (tok == " ") ? '&nbsp;' : tok;                            
+										errorSpan.setAttribute('class', 'highlightError');
+										errorSpan.setAttribute('id', `error${i}${pos}`);                  
+										errorSpan.appendChild(generatePopupHTML(errs.shift(), `popup${i}${pos}`)) // send first error object from array to function, then remove the element
 									} else {
-											errorSpan.setAttribute('id', `${i}${pos}`);
+										errorSpan.setAttribute('id', `${i}${pos}`);
 									}
 													
 									errorSpan.innerHTML += tok;
@@ -129,10 +141,8 @@ function runAssembler(){
 
     //finished going through input lines, check if all symbols have been used:
     if (currentCPU == 'EEP1') {
-      console.log(symbolTable);
       for(let symbol in symbolTable){
         //console.log(symbolArr);
-        console.log(symbol);
         if(!symbolTable[symbol][1]){
           //symbol hasn't been used:
           Message += `Warning: ${symbol} was never used\n`;
@@ -217,5 +227,46 @@ function syncScrollFunc(){
 
 	for(elem of syncScroll){
 			elem.scrollTop = top;
+	}
+}
+
+// download functions, when button is pressed .ram file is generated on the users computer
+// could be implemented much better using File System Access API
+// https://web.dev/file-system-access
+function downloadFile() {
+	// check if current assembly is actually downladable
+	if(downloadButton.getAttribute('downloadable') == 'true'){
+		console.log('downloading file');
+		
+		// generate string of file to be downloaded
+		let content = AssemblyOutput.innerHTML;
+
+		content = content.split('<br>');
+
+		let outputFile = '';
+
+		for(let i = 0; i < numLines; i++){
+			if(content[i] == ''){
+				// skip line and keep counter the same
+				i--;
+			} else {
+				outputFile += `0x${i.toString(16)}\t${content[i]}\n`;
+			}
+		}
+
+		// https://ourcodeworld.com/articles/read/189/how-to-create-a-file-and-generate-a-download-with-javascript-in-the-browser-without-a-server
+		// actual downloading bit
+		let element = document.createElement('a');
+		console.log(outputFile);
+		element.setAttribute('href', `data:text/plain;charset=utf-8,${outputFile}`);
+		element.setAttribute('download', `${currentCPU}_file.ram`);
+
+		element.style.display = 'none';
+		document.body.appendChild(element);
+		element.click();
+
+		document.body.removeChild(element);
+	} else {
+		alert('Fix errors in assembly');
 	}
 }
