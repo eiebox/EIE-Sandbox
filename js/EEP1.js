@@ -210,7 +210,7 @@ export function OpCodeResolver(Line, encoding = 2, symbolTable){
             // convert binary number back to int 
             // convert int to hex
             // make it uppercase and add leading 0s 
-            ouput =  "0x" + parseInt(output, 2).toString(16).toUpperCase().padStart(4, '0');
+            output =  "0x" + parseInt(output, 2).toString(16).toUpperCase().padStart(4, '0');
         } else {
             output = "0b" + output;
         }
