@@ -2,6 +2,7 @@
 const AssemblyInput = document.getElementById('AssemblyInput');
 const lineNumberDiv = document.getElementById('lineNumbers');
 const AssemblyOutput = document.getElementById('AssemblyOutput');
+const downloadButton = document.getElementById('downloadBttn');
 
 // synchronize scrolling array
 let syncScroll = [AssemblyInput, lineNumberDiv, AssemblyOutput];
@@ -35,6 +36,11 @@ function onLoadFunc(){
 	}
 
 	updateLines();
+
+	// ACTION LISTENERS
+
+	// action listener for downlaod button
+	downloadButton.addEventListener('click',downloadFile);
 			
 	// Action listener for text area
 	AssemblyInput.addEventListener("input", updateLines);
@@ -101,13 +107,13 @@ function runAssembler(){
 									let errorSpan = document.createElement('span');
 								
 									if(errs[0] && errs[0].errToken === tok) {
-											// strange solution to display white space in span
-											tok = (tok == " ") ? '&nbsp;' : tok;                            
-											errorSpan.setAttribute('class', 'highlightError');
-											errorSpan.setAttribute('id', `error${i}${pos}`);                  
-											errorSpan.appendChild(generatePopupHTML(errs.shift(), `popup${i}${pos}`)) // send first error object from array to function, then remove the element
+										// strange solution to display white space in span
+										tok = (tok == " ") ? '&nbsp;' : tok;                            
+										errorSpan.setAttribute('class', 'highlightError');
+										errorSpan.setAttribute('id', `error${i}${pos}`);                  
+										errorSpan.appendChild(generatePopupHTML(errs.shift(), `popup${i}${pos}`)) // send first error object from array to function, then remove the element
 									} else {
-											errorSpan.setAttribute('id', `${i}${pos}`);
+										errorSpan.setAttribute('id', `${i}${pos}`);
 									}
 													
 									errorSpan.innerHTML += tok;
@@ -218,4 +224,39 @@ function syncScrollFunc(){
 	for(elem of syncScroll){
 			elem.scrollTop = top;
 	}
+}
+
+// download functions, when button is pressed .ram file is generated on the users computer
+function downloadFile() {
+	console.log('downloading file');
+	
+	// generate string of file to be downloaded
+	let content = AssemblyOutput.innerHTML;
+
+	content = content.split('<br>');
+
+	let outputFile = '';
+
+	for(let i = 0; i < numLines; i++){
+		if(content[i] == ''){
+			// skip line and keep counter the same
+			i--;
+		} else {
+			outputFile += `0x${i.toString(16)}\t${content[i]}\n`;
+		}
+	}
+
+	// https://ourcodeworld.com/articles/read/189/how-to-create-a-file-and-generate-a-download-with-javascript-in-the-browser-without-a-server
+	// actual downloading bit
+	let element = document.createElement('a');
+	console.log(outputFile);
+	element.setAttribute('href', `data:text/plain;charset=utf-8,${outputFile}`);
+	element.setAttribute('download', 'file.ram');
+
+	element.style.display = 'none';
+	document.body.appendChild(element);
+	console.log(element);
+	element.click();
+
+	document.body.removeChild(element);
 }

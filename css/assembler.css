@@ -310,6 +310,7 @@ div.textArea {
     align-items: center;
     display: flex;
     flex-direction: row;
+    margin: 0 0.5em;
 }
 .AssemblerControls h1 {
     font-family: monospace;
@@ -354,6 +355,23 @@ input:checked + .slider {
 }
 #tc {
     position: absolute;
+}
+
+.downloadBttn {
+    min-width: 1.4em;
+    margin: 0.5em;
+    /* display flex so that random whitespace doesn't appear underneath the image */
+    display: flex;
+}
+
+.downloadBttn:hover {
+    box-shadow: 4px 4px 7px  #000000 ;
+}
+
+.binaryFile {
+    fill-rule:evenodd;
+    clip-rule:evenodd;
+    fill: white;
 }
 
 /* ERROR HIGHLIGHTING DON'T DELETE THIS */
