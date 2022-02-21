@@ -358,7 +358,7 @@ input:checked + .slider {
 }
 
 .downloadBttn {
-    min-width: 1.4em;
+    width: 1.4em;
     margin: 0.5em;
     /* display flex so that random whitespace doesn't appear underneath the image */
     display: flex;
