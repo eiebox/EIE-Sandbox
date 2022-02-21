@@ -23,45 +23,6 @@ const ConversionDictRegister = {
     'R3': '11'
 }
 
-/*
-class AssemblerError extends Error {
-    constructor(message, vertPos) {
-        super(message);
-        this.vertPos = vertPos;
-    }
-}
-
-class InvalidOpcodeError extends AssemblerError {
-    constructor(vertPos, invalidOpcode) {
-        super(`Invalid Opcode: "${invalidOpcode}"`, vertPos);
-    }
-}
-
-class OperandSizeError extends AssemblerError {
-    constructor(vertPos, expectedNumOperands, receivedNumOperands) {
-        if (receivedNumOperands > expectedNumOperands) {
-            super(`Too many Operands! Expected ${expectedNumOperands} but read ${receivedNumOperands}`, vertPos);
-        }
-        else if (receivedNumOperands < expectedNumOperands) {
-            super(`Not enough Operands! Expected ${expectedNumOperands} but read ${receivedNumOperands}`, vertPos);
-        }
-        else super('Unknown operand size error', vertPos);
-    }
-}
-
-class ImmOutRangeError extends AssemblerError {
-    constructor(vertPos, minVal, maxVal) {
-        super(`Immediate Operand Invalid! Value must be between ${minVal} and ${maxVal}`, vertPos);
-    }
-}
-
-class InvalidInputError extends AssemblerError {
-    constructor(vertPos, expectedFormat) {
-        super(`Input invalid! Expected ${expectedFormat}`, vertPos);
-    }
-}
-*/
-
 export function OpCodeResolver(Line, encoding) {
     let errorsEncountered = [];
 

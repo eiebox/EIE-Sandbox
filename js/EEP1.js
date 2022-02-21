@@ -38,18 +38,8 @@ const OPCODES = {
 /* Define functions to interpret different parts of the instructions */
 
 function twosComplementConversion(negative_num){
-    let string_num = (Math.abs(negative_num)-1).toString(2);
-
-    // extend zeros
-    if(string_num[0] == 1){
-        string_num = '0' + string_num;
-    } 
-
-    let result = "";
-    for(let char of string_num){
-        result += (char == '1' ? '0' : '1'); //invert all the digits
-    }
-    return result;
+    let string_num = (negative_num >>> 0).toString(2).substring(26, 31); //More effecient negative -> twos complement
+    return string_num;
 }
 
 
@@ -83,7 +73,7 @@ function Immediate(token, format){
                 // positive number, no need to convert to twos complement
                 return immOut.toString(2).padStart(format, '0');
             } else if (immOut >= -16 && immOut < 0) {
-                return twosComplementConversion(immOut).padStart(format, '1');
+                return twosComplementConversion(immOut);
             } else {
                 throw new ImmOutRangeError(-16, 15,token);
             }
@@ -148,15 +138,16 @@ export function OpCodeResolver(Line, encoding = 2, symbolTable){
     if (Object.keys(OPCODES).includes(tokens[0])){
         
 
-        let instruction = OPCODES[tokens[0]];
+        let instruction = OPCODES[tokens[0]]; //fetch instruction Hex
 
-        // append opcode conversion to output
-        output += instruction[0].toString(2).padStart(4, '0');
-        // needed for instructions which have arbitrary 0s and 1s
-        let tokensCounter = 1;
+        output += instruction[0].toString(2).padStart(4, '0');// append the hex opcode into binary and append to the output message
+
+        let tokensCounter = 1;// needed for instructions which have arbitrary 0s and 1s
+        console.log(tokensCounter);
+
         for (let i = 1; i < instruction.length; i++) {
-            // if a token matches with a symbol from the symbol table then it is converted
-            
+
+            // if a token matches with a symbol from the symbol table then it is converted            
             if(Object.keys(symbolTable).includes(tokens[tokensCounter])) { //check if this is defined
                 // symbol has been used therefore it's set to true
                 symbolTable[tokens[tokensCounter]][1] = true;
