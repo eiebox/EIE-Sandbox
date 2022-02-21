@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="format-detection" content="telephone=no" />
+    <link rel="stylesheet" href="EEP1Assembler.css"> 
+<!-- START NAVBAR STYLING-->
+    <link rel="stylesheet" href="../navbar.css">    
+    <!-- Style for the dropdown thing-->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<!-- END NAVBAR STYLING-->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EEP1 Assembler</title>
+    <!-- Global site tag (gtag.js) - Google Analytics-->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-1G85960FGM"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-1G85960FGM');
+    </script>
+    <!--End of Google Analytics-->
+</head>
+<!-- START OF NAVBAR STUFF -->
+<body style="background-color: #333333;" onload="LoadData();">
+    <header class="PageHeader">
+        <div class="TopNavBar">
+            <a href="../index.html"><img src="../StaticContent/Logo.svg" id="Logo"/></a>
+            <div class="dropdown">
+                <button class="dropbtn" onclick="dropDownFunc()">
+                    <i class="fa fa-caret-right"></i>
+                    [ASSEMBLERS]
+                </button>
+                <div class ="dropdown-content" id="myDropdown">
+                    <a href="../EEP1Assembler/EEP1Assembler.html">[EEP1-ASSEMBLER]</a>
+                    <a href="../EEP0Assembler/EEP0Assembler.html">[EEP0-ASSEMBLER]</a>                    
+                </div>
+            </div>
+        </div>
+    </header>
+    <script>
+        /* When the user clicks on the button, 
+        toggle between hiding and showing the dropdown content */
+        function dropDownFunc() {
+            document.getElementById("myDropdown").classList.toggle("show");
+        }
+        
+        // Close the dropdown if the user clicks outside of it
+        window.onclick = function(e) {
+            if (!e.target.matches('.dropbtn')) {
+            var myDropdown = document.getElementById("myDropdown");
+            if (myDropdown.classList.contains('show')) {
+                myDropdown.classList.remove('show');
+            }
+            }
+        }
+    </script>
+
+<!-- END OF NAVBAR STUFF -->
+    <div class="AssemblerControls">
+        <h1>[EEP1 - ASSEMBLER]</h1>
+                
+        <div class="toggle">
+                <span class="switchLabel">[BIN]</span>
+                <label class="switchBody">
+                    <input type="checkbox" id="binhex" class="checkbox" onclick="switchModes()">
+                    <span class="slider">
+                        <img id="tc" src="../StaticContent/tc1.png" alt="The wondeful Thomas Clarke">
+                    </span>
+                </label>
+                <span class="switchLabel">[HEX]</span>
+        </div>
+        
+    </div>
+    <div class="TextAreas">
+        <textarea id="AssemblyInput" class="textArea" rows="10" spellcheck="false">MOV R0, R1</textarea>   
+        <div id="lineNumbers" class="lineNumbers">
+            <span id="0">0</span>
+        </div>
+        <div readonly href="#" id="AssemblyOutput" class="textArea" rows="10" tabindex="0">0b0000000000100000</div>   
+    </div> 
+    <button class="assemblerbtn" type="button" onclick="runAssembler();">Run Assembler</button>
+    <script src="EEP1Assembler.js"></script>
+</body>
+</html>
