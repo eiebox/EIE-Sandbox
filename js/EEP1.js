@@ -1,10 +1,8 @@
-import { AssemblerError, InvalidOpcodeError, RegOutRangeError, OperandSizeError, ImmOutRangeError, InvalidInputError} from "../js/errorClasses.js";
-
 const REGISTER_COUNT = 8;
-const REGISTER_BITS = 3;
 
 //maps opcode to I, for JMP instrunction I[13:12] are don't cares so they are set to 0
 const OPCODES = {
+
 // JMP
     "JMP": [0xC0, '#Imm8'],
     "JNE": [0xC2, '#Imm8'],
@@ -21,6 +19,7 @@ const OPCODES = {
     "JLS": [0xCD, '#Imm8'],
     "JSR": [0xCE, '#Imm8'],
     "RET": [0xCF, '#Imm8'],
+
 // ALU
     "MOV": [0x0, "Ra", "Op"],
     "ADD": [0x1, 'Ra', 'Op'],
@@ -30,6 +29,7 @@ const OPCODES = {
     "AND": [0x5, 'Ra', 'Op'],
     "XOR": [0x6, 'Ra', 'Op'],    
     "LSL": [0x7, 'Ra', '0', 'Rb', '#Imms5'],
+
 // LDR / STR
     "LDR": [0b1000, 'Ra', 'Op'],
     "STR": [0b1010, 'Ra', 'Op'],
@@ -37,31 +37,36 @@ const OPCODES = {
 
 /* Define functions to interpret different parts of the instructions */
 
+//function to convert negative numbers into twos complement form
 function twosComplementConversion(negative_num){
-    let string_num = (negative_num >>> 0).toString(2).substring(26, 31); //More effecient negative -> twos complement
-    return string_num;
+    return (negative_num >>> 0).toString(2).substring(27, 32); //More effecient negative -> twos complement
 }
 
 
 // function Register takes in input register string in form "Rnum" and return corresponding binary representation
 function Register(token){    
+
     // check if token is actually defined
     if(token) {
-        // Check it is in correct formst
+
+        // Check it is in correct format
         if(token.length > 1 && token[0] == "R") {
             let regNum = Number(token.replace("R",""));
-            // check register is correct size
-            if (regNum < REGISTER_COUNT && regNum >= 0) {
-                return regNum.toString(2).padStart(REGISTER_BITS, "0");
+
+            if (regNum < REGISTER_COUNT && regNum >= 0) { //check register size
+                return regNum.toString(2).padStart(parseInt(REGISTER_COUNT/2), "0");//pad with zeros to make it 3bit long
             } else {
-                throw new RegOutRangeError(REGISTER_COUNT - 1, token);
+                errors.push(new RegOutRangeError(REGISTER_COUNT - 1, token)); 
             }
+
         } else {
             throw new InvalidInputError('a register', token);
         }
+
     } else {
         throw new InvalidInputError('a register', ' ');
     }
+
 }
 
 // function Immediates convert #Imms5 and #Imm8 to binary representation, 
@@ -114,7 +119,7 @@ function Operand(token){
 }
 
 
-export function OpCodeResolver(Line, encoding = 2, symbolTable){
+function OpCodeResolver(Line, encoding = 2, symbolTable){
     // formatting line to extract individual tokens
     let tokens = Line.replace(/,/g,"").trim().split(" ");
     let output = "";
@@ -124,12 +129,15 @@ export function OpCodeResolver(Line, encoding = 2, symbolTable){
     // check whether first token is symbol token (identified by : at the end)
     if(tokens[0][tokens[0].length - 1] == ':'){
         tokens[0] = tokens[0].replace(':','');
-        // check whether symbol has already been used
+
+        // check whether symbol has already been used        
         if(symbolTable[tokens[0]]){
             errors.push(new AssemblerError('Symbol has already been used', tokens[0]));
-            return errors;
+            throw errors;
         } 
+
         newSymbol = tokens[0];
+
         // use shift so the rest of the program can continue to work properly
         symbolTable[tokens.shift()] = [0, false];
         
@@ -217,5 +225,3 @@ export function OpCodeResolver(Line, encoding = 2, symbolTable){
         throw errors; 
     }
 }
-
-

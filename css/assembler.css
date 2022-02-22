@@ -257,6 +257,8 @@ div.textArea {
     padding: 5px;    
     resize: none;
     border: 1px solid black;
+    overflow-y: auto;
+    overflow-x: auto;
 
     font-size: inherit;
     color: inherit;

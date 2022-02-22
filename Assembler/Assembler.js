@@ -14,10 +14,19 @@ let currentCPU;
 
 
 function onLoadFunc(){
+
 	// returns object with all GET parameters in current url string
 	const urlParams = new URLSearchParams(window.location.search);
 	currentCPU = urlParams.get('cpu');
-	console.log(currentCPU);
+
+	//Create a script element loading the correct cpu js file
+	let cpu_script = document.createElement('script');
+	if(currentCPU == "EEP0"){
+		cpu_script.src = "../js/EEP0.js";
+	}else {
+		cpu_script.src = "../js/EEP1.js";
+	}
+	document.body.appendChild(cpu_script);
 
 	// Change HTML to match current CPU
 	document.getElementById('HeadTitle').innerHTML = `${currentCPU} Assembler`;
@@ -38,7 +47,6 @@ function onLoadFunc(){
 	updateLines();
 
 	// ACTION LISTENERS
-
 	// action listener for downlaod button
 	downloadButton.addEventListener('click',downloadFile);
 			
@@ -67,100 +75,100 @@ function runAssembler(){
 
 	InputText = InputText.split('\n');
 
-	// Diego I'm sure you can find a better solution to this 
-	//importing the correct js file for this CPU
-	import(`../js/${currentCPU}.js`)
-		.then(module => {	
+	// reset attribute value 
+	downloadButton.setAttribute('downloadable','true');
 
-		// reset attribute value 
-		downloadButton.setAttribute('downloadable','true');
-
-    // dictionary where key is the symbol string and the value is an array with address and boolean to keep track of its usage
-    let symbolTable = new Array();
+	// dictionary where key is the symbol string and the value is an array with address and boolean to keep track of its usage
+	let symbolTable = new Array();
 		let lineCounter = 0;
 		for(i in InputText){
 			if(InputText[i] != ""){
-					try{
-            if (currentCPU == 'EEP1') {
-              let resolvedOpCode = module.OpCodeResolver(InputText[i], outputEncoding, symbolTable);
-              if (resolvedOpCode.length > 1) {
-                // if there was a new symbol found, update the table with the line value
-                symbolTable[resolvedOpCode[1]][0] = lineCounter;
-              }
-              //console.log(symbolTable);
-              Message += `${resolvedOpCode[0]}\n`;
-            } else {
-              Message += `${module.OpCodeResolver(InputText[i], outputEncoding)}\n`;
-            }
-								
-					} catch(errs) {
-							// console.log(errs);
+				try{
+					if (currentCPU == 'EEP1') {
 
-							//errors found therefore update the download div so it doens't work
-							downloadButton.setAttribute('downloadable','false');
+						let resolvedOpCode = OpCodeResolver(InputText[i], outputEncoding, symbolTable);
 
-							Message += `<span class="errorText">Error: </span>`;
+						if (resolvedOpCode.length > 1) {
+							// if there was a new symbol found, update the table with the line value
+							symbolTable[resolvedOpCode[1]][0] = lineCounter;
+						}
+
+						//console.log(symbolTable);
+						Message += `${resolvedOpCode[0]}\n`;
+
+					} else {
+						Message += `${OpCodeResolver(InputText[i], outputEncoding)}\n`;
+					}			
+
+				} catch(errs) {
 							
-							if(errs.length > 0) {
-								// copy current line in ouput as a bunch of spans with id same as posisiton and line                    
-								splitLine = InputText[i].replace(/,/g,"").trim().split(" "); // extracting tokens
-								splitLine.push(" "); // add trailing white space for any missing tokens
-								// [ "MOV", "R0", "#", " " ]
-								
-								for(let [i2, tok] of splitLine.entries()){
-									let pos = InputText[i].indexOf(tok) + 1; // so that if tok not in array (white space not found) pos is 0 rather than -1                   
+					console.log(errs);
+					
+					//errors found therefore update the download div so it doesn't work
+					downloadButton.setAttribute('downloadable','false');
 
-									let errorSpan = document.createElement('span');
-								
-									if(errs[0] && errs[0].errToken === tok) {
-										// strange solution to display white space in span
-										tok = (tok == " ") ? '&nbsp;' : tok;                            
-										errorSpan.setAttribute('class', 'highlightError');
-										errorSpan.setAttribute('id', `error${i}${pos}`);                  
-										errorSpan.appendChild(generatePopupHTML(errs.shift(), `popup${i}${pos}`)) // send first error object from array to function, then remove the element
-									} else {
-										errorSpan.setAttribute('id', `${i}${pos}`);
-									}
-													
-									errorSpan.innerHTML += tok;
-									Message += errorSpan.outerHTML;
-									Message += i2 < splitLine.length - 1 ? ' ' : '';
-								}
-								Message += '\n';
+					Message += `<span class="errorText">Error: </span>`;
+
+					if(errs.length > 0){	
+
+						// copy current line in ouput as a bunch of spans with id same as posisiton and line                    
+						splitLine = InputText[i].replace(/,/g,"").trim().split(" "); // extracting tokens
+						splitLine.push(" "); // add trailing white space for any missing tokens
+						// [ "MOV", "R0", "#", " " ]
+						
+						for(let [i2, tok] of splitLine.entries()){
+							let pos = InputText[i].indexOf(tok) + 1; // so that if tok not in array (white space not found) pos is 0 rather than -1                   
+
+							let errorSpan = document.createElement('span');
+							
+							if(errs[0] && errs[0].errToken === tok) {
+								// strange solution to display white space in span
+								tok = (tok == " ") ? '&nbsp;' : tok;                            
+								errorSpan.setAttribute('class', 'highlightError');
+								errorSpan.setAttribute('id', `error${i}${pos}`);                  
+								errorSpan.appendChild(generatePopupHTML(errs.shift(), `popup${i}${pos}`)) // send first error object from array to function, then remove the element
+							} else {
+								errorSpan.setAttribute('id', `${i}${pos}`);
 							}
-							else {
-									Message += `${errs.message}\n`;
-							}
+											
+							errorSpan.innerHTML += tok;
+							Message += errorSpan.outerHTML;
+							Message += i2 < splitLine.length - 1 ? ' ' : '';
+
+						}
+						Message += '\n';
 					}
-					// separate counter to keep track of lines of actual code
-					lineCounter++;
-			} else {
-					Message += '\n';
+					else {
+						Message += `${errs.message}\n`;
+					}
+				}
+
+				// separate counter to keep track of lines of actual code
+				lineCounter++;
+
+			} 
+			else {
+				Message += '\n';
 			}
 		}
 
-    //finished going through input lines, check if all symbols have been used:
-    if (currentCPU == 'EEP1') {
-      for(let symbol in symbolTable){
-        //console.log(symbolArr);
-        if(!symbolTable[symbol][1]){
-          //symbol hasn't been used:
-          Message += `Warning: ${symbol} was never used\n`;
-        }
-      }
-    }
+	//finished going through input lines, check if all symbols have been used:
+	if (currentCPU == 'EEP1') {
+		for(let symbol in symbolTable){
+			//console.log(symbolArr);
+			if(!symbolTable[symbol][1]){
+				//symbol hasn't been used:
+				Message += `Warning: ${symbol} was never used\n`;
+			}
+		}
+	}
 
-		Message = Message.replace(/\n/g, '<br>');
+	Message = Message.replace(/\n/g, '<br>');
 
-		//save data to local stoage
-		localStorage.setItem(`${currentCPU}message`, Message);
-		localStorage.setItem(`${currentCPU}encoding`, outputEncoding);
-
-		AssemblyOutput.innerHTML = Message;
-	})
-	.catch(err => {
-		console.log(err);
-	});	
+	//save data to local stoage
+	localStorage.setItem(`${currentCPU}message`, Message);
+	localStorage.setItem(`${currentCPU}encoding`, outputEncoding);
+	AssemblyOutput.innerHTML = Message;
 }
 
 //function that is run when toggle is clicked
@@ -266,7 +274,9 @@ function downloadFile() {
 		element.click();
 
 		document.body.removeChild(element);
+
 	} else {
+		//alert message that occours when trying to download with an error active
 		alert('Fix errors in assembly');
 	}
 }

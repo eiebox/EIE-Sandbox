@@ -1,5 +1,3 @@
-import { AssemblerError, InvalidOpcodeError, OperandSizeError, ImmOutRangeError, InvalidInputError, RegOutRangeError} from "../js/errorClasses.js";
-
 const ConversionDictOpcode = {
     'MOV': '000',
     'ADD': '001',
@@ -23,7 +21,7 @@ const ConversionDictRegister = {
     'R3': '11'
 }
 
-export function OpCodeResolver(Line, encoding) {
+function OpCodeResolver(Line, encoding) {
     let errorsEncountered = [];
 
     Line = Line
