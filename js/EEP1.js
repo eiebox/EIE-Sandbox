@@ -1,4 +1,5 @@
 const REGISTER_COUNT = 8;
+const REGISTER_BITS = Math.log2(REGISTER_COUNT);
 
 //maps opcode to I, for JMP instrunction I[13:12] are don't cares so they are set to 0
 const OPCODES = {
@@ -54,7 +55,7 @@ function Register(token){
             let regNum = Number(token.replace("R",""));
 
             if (regNum < REGISTER_COUNT && regNum >= 0) { //check register size
-                return regNum.toString(2).padStart(parseInt(REGISTER_COUNT/2), "0");//pad with zeros to make it 3bit long
+                return regNum.toString(2).padStart(REGISTER_BITS, "0");//pad with zeros to make it 3bit long
             } else {
                 errors.push(new RegOutRangeError(REGISTER_COUNT - 1, token)); 
             }

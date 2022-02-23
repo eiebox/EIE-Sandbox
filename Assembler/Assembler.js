@@ -14,7 +14,6 @@ let currentCPU;
 
 
 function onLoadFunc(){
-
 	// returns object with all GET parameters in current url string
 	const urlParams = new URLSearchParams(window.location.search);
 	currentCPU = urlParams.get('cpu');
@@ -26,6 +25,7 @@ function onLoadFunc(){
 	}else {
 		cpu_script.src = "../js/EEP1.js";
 	}
+	cpu_script.onload = updateLines;
 	document.body.appendChild(cpu_script);
 
 	// Change HTML to match current CPU
@@ -40,11 +40,8 @@ function onLoadFunc(){
 		if (outputEncoding != 2){
 				let checkbox = document.getElementById('binhex');
 				checkbox.checked = !checkbox.checked;
-				runAssembler();
 		}
 	}
-
-	updateLines();
 
 	// ACTION LISTENERS
 	// action listener for downlaod button
@@ -57,6 +54,7 @@ function onLoadFunc(){
 	for(elem of syncScroll){
 			elem.addEventListener("scroll",syncScrollFunc);
 	}
+	
 }
 
 function generatePopupHTML(error, id) {
