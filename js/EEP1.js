@@ -27,7 +27,7 @@ const OPCODES = { // OPCODE structure is [ OPCODE, MAX_OPERANDS, OPERAND_FORMAT.
     "SBC": [0x4, 3, 'Ra', 'Op'],
     "AND": [0x5, 3, 'Ra', 'Op'],
     "XOR": [0x6, 3, 'Ra', 'Op'],    
-    "LSL": [0x7, 3, 'Ra', '0', 'Rb', '#Imms5'],
+    "LSR": [0x7, 3, 'Ra', '0', 'Rb', '#Imms5'],
 // LDR / STR
     "LDR": [0b1000, 'Ra', 'Op'],
     "STR": [0b1010, 'Ra', 'Op'],
@@ -124,22 +124,22 @@ function OpCodeResolver(Line, encoding = 2, symbolTable){
     let errors = [];
     let newSymbol;
 
-    // check whether first token is symbol token (identified by : at the end)
-    if(tokens[0][tokens[0].length - 1] == ':'){
-        tokens[0] = tokens[0].replace(':','');
+    // // check whether first token is symbol token (identified by : at the end)
+    // if(tokens[0][tokens[0].length - 1] == ':'){
+    //     tokens[0] = tokens[0].replace(':','');
 
-        // check whether symbol has already been used        
-        if(symbolTable[tokens[0]]){
-            errors.push(new AssemblerError('Symbol has already been used', tokens[0]));
-            throw errors;
-        } 
+    //     // check whether symbol has already been used        
+    //     if(symbolTable[tokens[0]]){
+    //         errors.push(new AssemblerError('Symbol has already been used', tokens[0]));
+    //         throw errors;
+    //     } 
 
-        newSymbol = tokens[0];
+    //     newSymbol = tokens[0];
 
-        // use shift so the rest of the program can continue to work properly
-        symbolTable[tokens.shift()] = [0, false];
+    //     // use shift so the rest of the program can continue to work properly
+    //     symbolTable[tokens.shift()] = [0, false];
         
-    }
+    // }
 
     if (Object.keys(OPCODES).includes(tokens[0])){        
         let instruction = OPCODES[tokens[0]];
@@ -155,7 +155,7 @@ function OpCodeResolver(Line, encoding = 2, symbolTable){
         for (let i = 2; i < instruction.length; i++) {
             // if a token matches with a symbol from the symbol table then it is converted
             
-            if(Object.keys(symbolTable).includes(tokens[tokensCounter])) { //check if this is defined
+            if(symbolTable && Object.keys(symbolTable).includes(tokens[tokensCounter])) { //check if symbol table is defined and if symbol table is defined for current token
                 // symbol has been used therefore it's set to true
                 symbolTable[tokens[tokensCounter]][1] = true;
                 
