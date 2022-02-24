@@ -1,6 +1,6 @@
 # EIE-Sandbox
 - the page can be found [here](https://www.eiebox.dev)
-- the develop branch page with features in beta can be found [here](https://eieboxdevelop.ylpsrvr.com)
+- the develop branch page with features in beta can be found [here](https://develop.eiebox.dev)
 # Features
 - [x] EEP0 Assembler
 - [ ] EEP0 Dissembler
