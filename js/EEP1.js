@@ -2,35 +2,32 @@ const REGISTER_COUNT = 8;
 const REGISTER_BITS = Math.log2(REGISTER_COUNT);
 
 //maps opcode to I, for JMP instrunction I[13:12] are don't cares so they are set to 0
-const OPCODES = {
-
+const OPCODES = { // OPCODE structure is [ OPCODE, MAX_OPERANDS, OPERAND_FORMAT... ]
 // JMP
-    "JMP": [0xC0, '#Imm8'],
-    "JNE": [0xC2, '#Imm8'],
-    "JEQ": [0xC3, '#Imm8'],
-    "JCS": [0xC4, '#Imm8'],
-    "JCC": [0xC5, '#Imm8'],
-    "JMI": [0xC6, '#Imm8'],
-    "JPL": [0xC7, '#Imm8'],
-    "JGE": [0xC8, '#Imm8'],
-    "JLT": [0xC9, '#Imm8'],
-    "JGT": [0xCA, '#Imm8'],
-    "JLE": [0xCB, '#Imm8'],
-    "JHI": [0xCC, '#Imm8'],
-    "JLS": [0xCD, '#Imm8'],
-    "JSR": [0xCE, '#Imm8'],
-    "RET": [0xCF, '#Imm8'],
-
+    "JMP": [0xC0, 1, '#Imm8'],
+    "JNE": [0xC2, 1, '#Imm8'],
+    "JEQ": [0xC3, 1, '#Imm8'],
+    "JCS": [0xC4, 1, '#Imm8'],
+    "JCC": [0xC5, 1, '#Imm8'],
+    "JMI": [0xC6, 1, '#Imm8'],
+    "JPL": [0xC7, 1, '#Imm8'],
+    "JGE": [0xC8, 1, '#Imm8'],
+    "JLT": [0xC9, 1, '#Imm8'],
+    "JGT": [0xCA, 1, '#Imm8'],
+    "JLE": [0xCB, 1, '#Imm8'],
+    "JHI": [0xCC, 1, '#Imm8'],
+    "JLS": [0xCD, 1, '#Imm8'],
+    "JSR": [0xCE, 1, '#Imm8'],
+    "RET": [0xCF00, 0],
 // ALU
-    "MOV": [0x0, "Ra", "Op"],
-    "ADD": [0x1, 'Ra', 'Op'],
-    "SUB": [0x2, 'Ra', 'Op'],
-    "ADC": [0x3, 'Ra', 'Op'],
-    "SBC": [0x4, 'Ra', 'Op'],
-    "AND": [0x5, 'Ra', 'Op'],
-    "XOR": [0x6, 'Ra', 'Op'],    
-    "LSL": [0x7, 'Ra', '0', 'Rb', '#Imms5'],
-
+    "MOV": [0x0, 3, "Ra", "Op"],
+    "ADD": [0x1, 3, 'Ra', 'Op'],
+    "SUB": [0x2, 3, 'Ra', 'Op'],
+    "ADC": [0x3, 3, 'Ra', 'Op'],
+    "SBC": [0x4, 3, 'Ra', 'Op'],
+    "AND": [0x5, 3, 'Ra', 'Op'],
+    "XOR": [0x6, 3, 'Ra', 'Op'],    
+    "LSL": [0x7, 3, 'Ra', '0', 'Rb', '#Imms5'],
 // LDR / STR
     "LDR": [0b1000, 'Ra', 'Op'],
     "STR": [0b1010, 'Ra', 'Op'],
@@ -94,7 +91,7 @@ function Immediate(token, format){
             throw new AssemblerError('Programmer made a mistake!',token);
         }
     } else {
-        throw new InvalidInputError('an immediate (with #)',(token ? token : ' ')); //throw whitespace if not defined
+        throw new InvalidInputError(`#Imm${format == 5 ? 's5' : '8'}`, (token ? token : ' ')); //throw whitespace if not defined
     }
 }
 
@@ -108,15 +105,15 @@ function Operand(token){
             // Register 
             return "0" + Register(token[0]).padEnd(8,"0"); 
         } else {
-            throw new InvalidInputError('a register or an immediate',token[0]);
+            throw new InvalidInputError('Rb or #Imm8',token[0]);
         }
     } else if (token.length == 2) {
         // register and Imms5
-        return "0" + Register(token[0]) + Immediate(token[1], 5);
+        return '0' + Register(token[0]) + Immediate(token[1], 5);
     } else if (token.length == 0) {
-        throw new AssemblerError('Missing operand'," ");
+        throw new InvalidInputError('Rb or Rb, #Imms5', ' ');
     }
-    else throw new AssemblerError('Too many inputs',token[0]);
+    // else throw new AssemblerError('Too many inputs',token[0]);
 }
 
 
@@ -144,19 +141,20 @@ function OpCodeResolver(Line, encoding = 2, symbolTable){
         
     }
 
-    if (Object.keys(OPCODES).includes(tokens[0])){
+    if (Object.keys(OPCODES).includes(tokens[0])){        
+        let instruction = OPCODES[tokens[0]];
+
+        if (tokens.length - 1 > instruction[1]) {
+            errors.push(new OperandSizeError(instruction[1], tokens.length - 1, tokens[0])); // error operand size limit exceeded, opcode highlighted
+        }
         
-
-        let instruction = OPCODES[tokens[0]]; //fetch instruction Hex
-
-        output += instruction[0].toString(2).padStart(4, '0');// append the hex opcode into binary and append to the output message
-
-        let tokensCounter = 1;// needed for instructions which have arbitrary 0s and 1s
-        console.log(tokensCounter);
-
-        for (let i = 1; i < instruction.length; i++) {
-
-            // if a token matches with a symbol from the symbol table then it is converted            
+        // append opcode conversion to output
+        output += instruction[0].toString(2).padStart(4, '0');
+        // needed for instructions which have arbitrary 0s and 1s
+        let tokensCounter = 1;
+        for (let i = 2; i < instruction.length; i++) {
+            // if a token matches with a symbol from the symbol table then it is converted
+            
             if(Object.keys(symbolTable).includes(tokens[tokensCounter])) { //check if this is defined
                 // symbol has been used therefore it's set to true
                 symbolTable[tokens[tokensCounter]][1] = true;
@@ -171,7 +169,7 @@ function OpCodeResolver(Line, encoding = 2, symbolTable){
                     errors.push(error);
                 }
             } else if (instruction[i] == "Op") {
-                let operand = tokens.filter(function(value, index, arr){
+                let operand = tokens.filter(function(_value, index, _arr){
                     return index > 1;
                 });
                 try {
