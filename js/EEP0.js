@@ -21,7 +21,7 @@ const ConversionDictRegister = {
     'R3': '11'
 }
 
-function OpCodeResolver(Line, encoding) {
+export function OpCodeResolver(Line, encoding) {
     let errorsEncountered = [];
 
     Line = Line

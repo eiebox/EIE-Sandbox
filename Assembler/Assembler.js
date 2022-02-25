@@ -4,57 +4,70 @@ const lineNumberDiv = document.getElementById('lineNumbers');
 const AssemblyOutput = document.getElementById('AssemblyOutput');
 const downloadButton = document.getElementById('downloadBttn');
 
-// synchronize scrolling array
-let syncScroll = [AssemblyInput, lineNumberDiv, AssemblyOutput];
+// Synchronisse scrolling array
+const syncScroll = [AssemblyInput, lineNumberDiv, AssemblyOutput];
 
-//Assembler Globals
+// Assembler versions
+const assemblerVersions = ['EEP0', 'EEP1'];
+
+// Assembler Globals
 let outputEncoding = 2;
 let numLines = 0;
 let currentCPU;
+let currentAssembler; // global module that gets imported on load 
+
+// Assign event listeners
+window.addEventListener('load', initAssembler);
+for(elem of syncScroll)	elem.addEventListener('scroll', syncScrollFunc); // synchronised scrolling
 
 
-function onLoadFunc(){
+// called by body on load
+function initAssembler() {
 	// returns object with all GET parameters in current url string
 	const urlParams = new URLSearchParams(window.location.search);
 	currentCPU = urlParams.get('cpu');
+	if (!assemblerVersions.includes(currentCPU)) alert('Invalid Assembler Version! Undefined behaviour.');
 
-	//Create a script element loading the correct cpu js file
-	let cpu_script = document.createElement('script');
-	if(currentCPU == "EEP0"){
-		cpu_script.src = "../js/EEP0.js";
-	}else {
-		cpu_script.src = "../js/EEP1.js";
-	}
-	cpu_script.onload = updateLines;
-	document.body.appendChild(cpu_script);
+	import(`../js/${currentCPU}.js`).then(module => {
+		// assign just loaded module to global variable
+		currentAssembler = module;
+
+		// assign these listeners that can only work after assembler initialisation
+		downloadButton.addEventListener('click', downloadFile); // download button
+		AssemblyInput.addEventListener('input', updateLines); // text area
+		updateLines();
+	}, err => { throw err; });
+
+	// while the file is loading, do all this stuff underneath (None of it depends on assembler functions)
 
 	// Change HTML to match current CPU
 	document.getElementById('HeadTitle').innerHTML = `${currentCPU} Assembler`;
 	document.getElementById('MiddleBarTitle').innerHTML = `[${currentCPU} - ASSEMBLER]`;
 
 	// Load Data from LocalStorage
-	if(localStorage.getItem(`${currentCPU}input`) != null){
+	if (localStorage.getItem(`${currentCPU}input`) != null) {
 		document.getElementById('AssemblyInput').innerHTML = localStorage.getItem(`${currentCPU}input`);
 		document.getElementById('AssemblyOutput').innerHTML = localStorage.getItem(`${currentCPU}message`);
 		outputEncoding = localStorage.getItem(`${currentCPU}encoding`);
-		if (outputEncoding != 2){
+		if (outputEncoding != 2) {
 				let checkbox = document.getElementById('binhex');
 				checkbox.checked = !checkbox.checked;
 		}
 	}
+}
 
-	// ACTION LISTENERS
-	// action listener for downlaod button
-	downloadButton.addEventListener('click',downloadFile);
-			
-	// Action listener for text area
-	AssemblyInput.addEventListener("input", updateLines);
+// returns array of lines, where any comments have been removed and all extra white spaces are removed
+function getCleanText() {
+	let inputText = AssemblyInput.value.toUpperCase().split('\n');
 
-	// add action listener for synchronized scrolling
-	for(elem of syncScroll){
-			elem.addEventListener("scroll",syncScrollFunc);
+	// remove comments from cleaned text
+	for (let i = 0; i < inputText.length; i++) {
+		if (inputText[i].includes('//')) inputText[i] = inputText[i].substring(0, inputText[i].indexOf('//')); // works for inline comments as well
+
+		inputText[i] = inputText[i].replace(/  +/g, ' ').trim();
 	}
-	
+
+	return inputText;
 }
 
 function generatePopupHTML(error, id) {
@@ -62,104 +75,127 @@ function generatePopupHTML(error, id) {
 	popupSpan.setAttribute('id', id);
 	popupSpan.setAttribute('class', 'popupError');
 	popupSpan.innerHTML = error.message.replace(/\n/g,'<br>');
+
 	return popupSpan;
 }
 
-function runAssembler(){
-	let Message = "";
-	AssemblyOutput.style.color = "white";
-	let InputText = AssemblyInput.value.toUpperCase();
-	localStorage.setItem(`${currentCPU}input`, InputText);
+function createSymbolTable(inputText, opcodes) {
+	let symbolTable = new Map();
 
-	InputText = InputText.split('\n');
+	let lineNumber = 0;
 
-	// reset attribute value 
-	downloadButton.setAttribute('downloadable','true');
-
-	// dictionary where key is the symbol string and the value is an array with address and boolean to keep track of its usage
-	let symbolTable = new Array();
-		let lineCounter = 0;
-		for(i in InputText){
-			if(InputText[i] != ""){
-				try{
-					if (currentCPU == 'EEP1') {
-
-						let resolvedOpCode = OpCodeResolver(InputText[i], outputEncoding, symbolTable);
-
-						if (resolvedOpCode.length > 1) {
-							// if there was a new symbol found, update the table with the line value
-							symbolTable[resolvedOpCode[1]][0] = lineCounter;
-						}
-
-						//console.log(symbolTable);
-						Message += `${resolvedOpCode[0]}\n`;
-
-					} else {
-						Message += `${OpCodeResolver(InputText[i], outputEncoding)}\n`;
-					}			
-
-				} catch(errs) {
-							
-					console.log(errs);
-					
-					//errors found therefore update the download div so it doesn't work
-					downloadButton.setAttribute('downloadable','false');
-
-					Message += `<span class="errorText">Error: </span>`;
-
-					if(errs.length > 0){	
-
-						// copy current line in ouput as a bunch of spans with id same as posisiton and line                    
-						splitLine = InputText[i].replace(/,/g,"").trim().split(" "); // extracting tokens
-						splitLine.push(" "); // add trailing white space for any missing tokens
-						// [ "MOV", "R0", "#", " " ]
-						
-						for(let [i2, tok] of splitLine.entries()){
-							let pos = InputText[i].indexOf(tok) + 1; // so that if tok not in array (white space not found) pos is 0 rather than -1                   
-
-							let errorSpan = document.createElement('span');
-							
-							if(errs[0] && errs[0].errToken === tok) {
-								// strange solution to display white space in span
-								tok = (tok == " ") ? '&nbsp;' : tok;                            
-								errorSpan.setAttribute('class', 'highlightError');
-								errorSpan.setAttribute('id', `error${i}${pos}`);                  
-								errorSpan.appendChild(generatePopupHTML(errs.shift(), `popup${i}${pos}`)) // send first error object from array to function, then remove the element
-							} else {
-								errorSpan.setAttribute('id', `${i}${pos}`);
-							}
-											
-							errorSpan.innerHTML += tok;
-							Message += errorSpan.outerHTML;
-							Message += i2 < splitLine.length - 1 ? ' ' : '';
-
-						}
-						Message += '\n';
-					}
-					else {
-						Message += `${errs.message}\n`;
-					}
-				}
-
-				// separate counter to keep track of lines of actual code
-				lineCounter++;
-
-			} 
-			else {
-				Message += '\n';
+	for (line of inputText) {
+		if (line !== '') {
+			line = line.replace(/  +/g, ' ').split(' ');
+			
+			if (line[0][line[0].length - 1] === ':' && !opcodes.includes(line[0])) {
+				symbolTable.set(line[0].slice(0, -1), {address: lineNumber, used: false});
 			}
-		}
-
-	//finished going through input lines, check if all symbols have been used:
-	if (currentCPU == 'EEP1') {
-		for(let symbol in symbolTable){
-			//console.log(symbolArr);
-			if(!symbolTable[symbol][1]){
-				//symbol hasn't been used:
-				Message += `Warning: ${symbol} was never used\n`;
-			}
+			lineNumber++;
 		}
 	}
+
+	return symbolTable;
+}
+
+function runAssembler(){
+	
+	localStorage.setItem(`${currentCPU}input`, AssemblyInput.value);
+	let inputText = getCleanText();
+	
+	// reset attribute value 
+	downloadButton.setAttribute('downloadable', 'true');
+	
+	let symbolTable;
+	
+	if (currentCPU == 'EEP1') {
+		// dictionary where key is the symbol string and the value is an array with address and boolean to keep track of its usage
+		let symbolTable = createSymbolTable(inputText, Object.keys(currentAssembler.OPCODES)); // function that finds all symbols in input text
+		console.log(symbolTable);
+	}
+	
+	let Message = "";
+	let lineCounter = 0;
+	for(i in inputText){
+		if(inputText[i] != ''){
+			try {
+				if (currentCPU == 'EEP1') {
+
+					let resolvedOpCode = currentAssembler.OpCodeResolver(inputText[i], outputEncoding, symbolTable); // beacuse EEP1 will always have symbol table
+
+					if (resolvedOpCode.length > 1) {
+						// if there was a new symbol found, update the table with the line value
+						symbolTable[resolvedOpCode[1]][0] = lineCounter;
+					}
+
+					//console.log(symbolTable);
+					Message += `${resolvedOpCode[0]}\n`;
+
+				} else {
+					Message += `${currentAssembler.OpCodeResolver(inputText[i], outputEncoding)}\n`;
+				}
+			} catch(errs) {				
+				//errors found therefore update the download div so it doesn't work
+				downloadButton.setAttribute('downloadable','false');
+
+				Message += `<span class="errorText">Error: </span>`;
+
+				if(errs.length > 0){	
+
+					// copy current line in ouput as a bunch of spans with id same as posisiton and line                    
+						// copy current line in ouput as a bunch of spans with id same as posisiton and line                    
+					// copy current line in ouput as a bunch of spans with id same as posisiton and line                    
+					splitLine = inputText[i].replace(/,/g,"").trim().split(" "); // extracting tokens
+					splitLine.push(" "); // add trailing white space for any missing tokens
+					// [ "MOV", "R0", "#", " " ]
+				
+					for(let [i2, tok] of splitLine.entries()){
+						let pos = inputText[i].indexOf(tok) + 1; // so that if tok not in array (white space not found) pos is 0 rather than -1                   
+
+						let errorSpan = document.createElement('span');
+						
+						if(errs[0] && errs[0].errToken === tok) {
+							// strange solution to display white space in span
+							tok = (tok == " ") ? '&nbsp;' : tok;                            
+								tok = (tok == " ") ? '&nbsp;' : tok;                            
+							tok = (tok == " ") ? '&nbsp;' : tok;                            
+							errorSpan.setAttribute('class', 'highlightError');
+							errorSpan.setAttribute('id', `error${i}${pos}`);                                  
+							errorSpan.appendChild(generatePopupHTML(errs.shift(), `popup${i}${pos}`)) // send first error object from array to function, then remove the element
+						} else {
+							errorSpan.setAttribute('id', `${i}${pos}`);
+						}
+										
+						errorSpan.innerHTML += tok;
+						Message += errorSpan.outerHTML;
+						Message += i2 < splitLine.length - 1 ? ' ' : '';
+
+					}
+					Message += '\n';
+				}
+				else {
+					Message += `${errs.message}\n`;
+				}
+			}
+
+			// separate counter to keep track of lines of actual code
+			lineCounter++;
+
+		} else {
+			Message += '\n';
+		}
+	}
+
+	//finished going through input lines, check if all symbols have been used:
+	// if (currentCPU == 'EEP1') {
+	// 	for(let symbol in symbolTable){
+	// 		//console.log(symbolArr);
+	// 		if(!symbolTable[symbol][1]){
+	// 			//symbol hasn't been used:
+	// 			Message += `Warning: ${symbol} was never used\n`;
+	// 		}
+	// 	}
+	// }
 
 	Message = Message.replace(/\n/g, '<br>');
 
@@ -193,8 +229,8 @@ document.addEventListener('keydown', (event) => {
 
 // function that update the lines numbers
 function updateLines(){
-	let InputText = AssemblyInput.value.split('\n');
-	let numNewlines = InputText.length;
+	let inputText = getCleanText();
+	let numNewlines = inputText.length;
 	
 	if (numNewlines > numLines){
 			for(let i = numLines; i < numNewlines; i++){
@@ -215,7 +251,7 @@ function updateLines(){
 	// set the innerHTML of the spans to allow for white spaces
 	let lineCounter = 0;
 	for(let i = 0; i < numLines; i++){
-			if(InputText[i] == ""){
+			if(inputText[i] == ''){
 					document.getElementById(i).innerHTML = '|';
 			} else {
 					document.getElementById(i).innerHTML = `0x${lineCounter.toString(16)}`;

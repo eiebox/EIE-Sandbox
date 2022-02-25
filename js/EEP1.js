@@ -2,7 +2,7 @@ const REGISTER_COUNT = 8;
 const REGISTER_BITS = Math.log2(REGISTER_COUNT);
 
 //maps opcode to I, for JMP instrunction I[13:12] are don't cares so they are set to 0
-const OPCODES = { // OPCODE structure is [ OPCODE, MAX_OPERANDS, OPERAND_FORMAT... ]
+export const OPCODES = { // OPCODE structure is [ OPCODE, MAX_OPERANDS, OPERAND_FORMAT... ]
 // JMP
     "JMP": [0xC0, 1, '#Imm8'],
     "JNE": [0xC2, 1, '#Imm8'],
@@ -117,15 +117,14 @@ function Operand(token){
 }
 
 
-function OpCodeResolver(Line, encoding = 2, symbolTable){
+export function OpCodeResolver(Line, encoding = 2, symbolTable){
     // formatting line to extract individual tokens
-    let tokens = Line.replace(/,/g,"").trim().split(" ");
-    let output = "";
+    let tokens = Line.replace(/,/g,'').trim().split(' ');
+    let output = '';
     let errors = [];
-    let newSymbol;
 
-    // // check whether first token is symbol token (identified by : at the end)
-    // if(tokens[0][tokens[0].length - 1] == ':'){
+    // check whether first token is symbol token (identified by : at the end)
+    // if (tokens[0][tokens[0].length - 1] == ':') {
     //     tokens[0] = tokens[0].replace(':','');
 
     //     // check whether symbol has already been used        
@@ -139,6 +138,10 @@ function OpCodeResolver(Line, encoding = 2, symbolTable){
     //     // use shift so the rest of the program can continue to work properly
     //     symbolTable[tokens.shift()] = [0, false];
         
+    // }
+
+    // if (Object.keys(symbolTable).includes(tokens[0])) {
+    //     tokens.shift();
     // }
 
     if (Object.keys(OPCODES).includes(tokens[0])){        
@@ -213,7 +216,7 @@ function OpCodeResolver(Line, encoding = 2, symbolTable){
             output = "0b" + output;
         }
         
-        if (newSymbol) {
+        if (symbolTable && newSymbol) {
             return [output, newSymbol];
         } else {
             return [output];
