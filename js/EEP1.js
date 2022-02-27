@@ -125,27 +125,6 @@ export function OpCodeResolver(Line, encoding = 2, symbolTable){
     let output = '';
     let errors = [];
 
-    // check whether first token is symbol token (identified by : at the end)
-    // if (tokens[0][tokens[0].length - 1] == ':') {
-    //     tokens[0] = tokens[0].replace(':','');
-
-    //     // check whether symbol has already been used        
-    //     if(symbolTable[tokens[0]]){
-    //         errors.push(new AssemblerError('Symbol has already been used', tokens[0]));
-    //         throw errors;
-    //     } 
-
-    //     newSymbol = tokens[0];
-
-    //     // use shift so the rest of the program can continue to work properly
-    //     symbolTable[tokens.shift()] = [0, false];
-        
-    // }
-
-    // if (Object.keys(symbolTable).includes(tokens[0])) {
-    //     tokens.shift();
-    // }
-
     if (Object.keys(OPCODES).includes(tokens[0])){        
         let instruction = OPCODES[tokens[0]];
 
@@ -160,11 +139,15 @@ export function OpCodeResolver(Line, encoding = 2, symbolTable){
         for (let i = 2; i < instruction.length; i++) {
             // if a token matches with a symbol from the symbol table then it is converted
             
-            if(symbolTable && Object.keys(symbolTable).includes(tokens[tokensCounter])) { //check if symbol table is defined and if symbol table is defined for current token
-                // symbol has been used therefore it's set to true
-                symbolTable[tokens[tokensCounter]]['used'] = true;
+            if(symbolTable && symbolTable.has(tokens[tokensCounter])) { // check if symbol table is defined and if symbol table is defined for current token
+                let tmpObj = symbolTable.get(tokens[tokensCounter]);
                 
-                tokens[tokensCounter] = `#${symbolTable[tokens[tokensCounter]]['address']}`;
+                if(tmpObj) { // check obj is defined
+                    tmpObj.used = true; // symbol has been used therefore it's set to true
+                    symbolTable.set(tokens[tokensCounter], tmpObj); // update value inside of symbol table
+                    
+                    tokens[tokensCounter] = `#${tmpObj.address}`;
+                }               
             }
 
             if (instruction[i] == "#Imm8"){
@@ -218,11 +201,7 @@ export function OpCodeResolver(Line, encoding = 2, symbolTable){
             output = "0b" + output;
         }
         
-        if (symbolTable && newSymbol) {
-            return [output, newSymbol];
-        } else {
-            return [output];
-        }
+        return output;
     } else {
         // catch in runAssembler expecting error array
         errors.push(new InvalidOpcodeError((tokens[0] ? tokens[0] : ' '))); // trick to show whitespace in output

@@ -92,10 +92,9 @@ function createSymbolTable(inputText, opcodes) {
 	let address = 0;
 
 	for (let [i, line] of inputText.entries()) {		
-		if (line !== '') {
-			const FIRST_TOKEN = line;
-
+		if (line !== '') {			
 			line = line.split(' '); // split each line into array of tokens
+			const FIRST_TOKEN = line[0];
 			
 			if (opcodes.includes(FIRST_TOKEN.slice(0, -1))) { // label is an opcode
 				let error = new AssemblerError('Invalid label name!\nReserved for OPCODE.', FIRST_TOKEN);
@@ -113,8 +112,9 @@ function createSymbolTable(inputText, opcodes) {
 
 			if (FIRST_TOKEN[FIRST_TOKEN.length - 1] === ':') { // last char of first token
 				symbolTable.set(FIRST_TOKEN.slice(0, -1), {address: address, used: false});
+
 				// console.log(inputText[i].replace(`${FIRST_TOKEN}`,''))
-				inputText[i] = inputText[i].replace(`${FIRST_TOKEN}`,''); // remove symbol from line definition
+				inputText[i] = inputText[i].replace(`${FIRST_TOKEN}`,''); // remove symbol from line
 			}
 
 			address++;
@@ -204,7 +204,7 @@ function runAssembler(){
 	try { // try to generate a symbol table, will throw errors by line if it fails
 		if (currentCPU == 'EEP1') {
 			// dictionary where key is the symbol string and the value is an array with address and boolean to keep track of its usage
-			let symbolTable = createSymbolTable(inputText, Object.keys(currentAssembler.OPCODES)); // function that finds all symbols in input text
+			symbolTable = createSymbolTable(inputText, Object.keys(currentAssembler.OPCODES)); // function that finds all symbols in input text
 			console.log(symbolTable);
 			console.log(inputText);
 		}
@@ -243,20 +243,23 @@ function runAssembler(){
 			}
 			
 		}
-		
 		if(assemblerErrors.length > 0) {
 			throw new MultipleErrors('Multiple Assembler Errors detected!', assemblerErrors);
 		}
 		//finished going through input lines, check if all symbols have been used:
-		// if (currentCPU == 'EEP1') {
-		// 	for(let symbol in symbolTable){
-		// 		//console.log(symbolArr);
-		// 		if(!symbolTable[symbol][1]){
-		// 			//symbol hasn't been used:
-		// 			Message += `Warning: ${symbol} was never used\n`;
-		// 		}
-		// 	}
-		// }
+		if (currentCPU == 'EEP1') {
+			let warningDiv = document.createElement('div');
+			warningDiv.setAttribute('id', 'warnings');
+
+			for(const [symbol, obj] of symbolTable){
+				console.log(obj);
+				if(!obj.used){ // symbol hasn't been used:				
+					warningDiv.innerHTML += `Warning: ${symbol} was never used<br>`;
+				}
+			}
+
+			if (warningDiv.innerHTML != '') AssemblyOutput.appendChild(warningDiv);
+		}
 
 
 		//save new output to local stoage
