@@ -1,10 +1,12 @@
+import { AssemblerError, MultipleErrors, InvalidInputError, InvalidOpcodeError, ImmOutRangeError, OperandSizeError, RegOutRangeError } from '../js/errorClasses.js';
+
 // HTML consts
 const AssemblyInput = document.getElementById('AssemblyInput');
 const lineNumberDiv = document.getElementById('lineNumbers');
 const AssemblyOutput = document.getElementById('AssemblyOutput');
 const downloadButton = document.getElementById('downloadBttn');
 
-// Synchronisse scrolling array
+// Synchronisse scrolling array (elems to sync)
 const syncScroll = [AssemblyInput, lineNumberDiv, AssemblyOutput];
 
 // Assembler versions
@@ -18,7 +20,7 @@ let currentAssembler; // global module that gets imported on load
 
 // Assign event listeners
 window.addEventListener('load', initAssembler);
-for(elem of syncScroll)	elem.addEventListener('scroll', syncScrollFunc); // synchronised scrolling
+for(let elem of syncScroll)	elem.addEventListener('scroll', syncScrollFunc); // synchronised scrolling
 
 
 // called by body on load
@@ -28,15 +30,18 @@ function initAssembler() {
 	currentCPU = urlParams.get('cpu');
 	if (!assemblerVersions.includes(currentCPU)) alert('Invalid Assembler Version! Undefined behaviour.');
 
-	import(`../js/${currentCPU}.js`).then(module => {
-		// assign just loaded module to global variable
-		currentAssembler = module;
+	import(`../js/${currentCPU}.js`)
+		.then(module => {
+			// assign just loaded module to global variable
+			currentAssembler = module;
 
-		// assign these listeners that can only work after assembler initialisation
-		downloadButton.addEventListener('click', downloadFile); // download button
-		AssemblyInput.addEventListener('input', updateLines); // text area
-		updateLines();
-	}, err => { throw err; });
+			// assign these listeners that can only work after assembler initialisation
+			downloadButton.addEventListener('click', downloadFile); // download button
+			AssemblyInput.addEventListener('input', updateLines); // text area
+			updateLines();
+		}, err => { 
+			alert(`Assembler module import failed! Undefined behaviour.\nDetails: ${err.message}`); 
+		});
 
 	// while the file is loading, do all this stuff underneath (None of it depends on assembler functions)
 
@@ -80,129 +85,208 @@ function generatePopupHTML(error, id) {
 }
 
 function createSymbolTable(inputText, opcodes) {
+	let errorArray = [];
+
 	let symbolTable = new Map();
 
-	let lineNumber = 0;
+	let address = 0;
 
-	for (line of inputText) {
+	for (let [i, line] of inputText.entries()) {		
 		if (line !== '') {
-			line = line.replace(/  +/g, ' ').split(' ');
+			const FIRST_TOKEN = line[0];
+
+			line = line.split(' '); // split each line into array of tokens
 			
-			if (line[0][line[0].length - 1] === ':' && !opcodes.includes(line[0])) {
-				symbolTable.set(line[0].slice(0, -1), {address: lineNumber, used: false});
+			if (opcodes.includes(FIRST_TOKEN.slice(0, -1))) { // label is an opcode
+				let error = new AssemblerError('Invalid label name! Name is reserved for OPCODE.', FIRST_TOKEN);
+
+				error.lineNumber = i;
+				errorArray.push(error);
 			}
-			lineNumber++;
+ 
+			if (symbolTable.get(FIRST_TOKEN)) { // entry already exists in symbol table
+				let error = new AssemblerError('Invalid label name! Symbol is a redefinition.', FIRST_TOKEN);
+
+				error.lineNumber = i;
+				errorArray.push(error);
+			}
+
+			if (FIRST_TOKEN[FIRST_TOKEN.length - 1] === ':') { // last char of first token
+				symbolTable.set(FIRST_TOKEN.slice(0, -1), {address: address, used: false});
+			}
+
+			address++;
 		}
 	}
+	if (errorArray.length != 0) throw new MultipleErrors('Symbol Table errors detected!', errorArray);
 
 	return symbolTable;
 }
 
+// expects list of errors by line 
+function showErrors(errors){
+	let inputText = getCleanText();
+
+	console.log(Object.getPrototypeOf(errors));
+	for (let errorLine of errors.errorArray) {
+		console.log(Object.getPrototypeOf(errorLine));
+
+		let lineDiv = document.getElementById(`line${errorLine.lineNumber}`); // div created in run assembler
+		lineDiv.innerHTML += `<span class="errorText">Error: </span>`;
+
+		if(errorLine instanceof MultipleErrors) { // OpCodeResolver errors
+			let tokenError = errorLine.errorArray;
+			// copy current line in ouput as a bunch of spans with id same as posisiton and line                    
+			let splitLine = inputText[errorLine.lineNumber].replace(/,/g,'').trim().split(" "); // extracting tokens
+			splitLine.push(' '); // add trailing white space for any missing tokens
+			// [ "MOV", "R0", "#", " " ]
+		
+			for(let [i, token] of splitLine.entries()){
+				let pos = inputText[errorLine.lineNumber].indexOf(token) + 1; // so that if tok not in array (white space not found) pos is 0 rather than -1                   
+
+				let errorSpan = document.createElement('span');
+				
+				if(tokenError[0] && tokenError[0].errToken === token) {
+					
+					token = (token == " ") ? '&nbsp;' : token; // strange solution to display white space in span
+
+					errorSpan.setAttribute('class', 'highlightError');
+					errorSpan.setAttribute('id', `error${i}${pos}`);   
+
+					errorSpan.appendChild(generatePopupHTML(tokenError.shift(), `popup${i}${pos}`)) // send first error object from array to function, then remove the element
+				
+				} else { 
+					errorSpan.setAttribute('id', `${i}${pos}`);
+				}
+								
+				errorSpan.innerHTML += token;
+				lineDiv.appendChild(errorSpan);
+				lineDiv.innerHTML += i < splitLine.length - 1 ? ' ' : ''; // kind of a botch
+
+			}
+		} else if (errorLine instanceof AssemblerError) { // symbol table errors
+
+			// copy current line in ouput as a bunch of spans with id same as posisiton and line                    
+			let splitLine = inputText[errorLine.lineNumber].replace(/,/g,'').trim().split(" "); // extracting tokens
+			// [ "MOV", "R0", "#", " " ]
+		
+			for(let [i, token] of splitLine.entries()){
+				let pos = inputText[errorLine.lineNumber].indexOf(token) + 1; // so that if tok not in array (white space not found) pos is 0 rather than -1                   
+
+				let errorSpan = document.createElement('span');
+				
+				if(errorLine.errToken === token) {
+					
+					token = (token == " ") ? '&nbsp;' : token; // strange solution to display white space in span
+
+					errorSpan.setAttribute('class', 'highlightError');
+					errorSpan.setAttribute('id', `error${i}${pos}`);   
+
+					errorSpan.appendChild(generatePopupHTML(tokenError.errToken, `popup${i}${pos}`)) // send first error object from array to function, then remove the element
+				
+				} else { 
+					errorSpan.setAttribute('id', `${i}${pos}`);
+				}
+								
+				errorSpan.innerHTML += token;
+				lineDiv.appendChild(errorSpan);
+				lineDiv.innerHTML += i < splitLine.length - 1 ? ' ' : ''; // kind of a botch
+
+			}
+
+		} else { // unknown error throw unhandled
+			throw errors;
+		}
+	}
+}
+
 function runAssembler(){
 	
-	localStorage.setItem(`${currentCPU}input`, AssemblyInput.value);
-	let inputText = getCleanText();
+	localStorage.setItem(`${currentCPU}input`, AssemblyInput.value); // update input text save
 	
 	// reset attribute value 
 	downloadButton.setAttribute('downloadable', 'true');
-	
+
+	// remove all childs of div to clear the output (better than innerHtml = '' which causes memory leaks)
+	while (AssemblyOutput.firstChild) {
+		AssemblyOutput.removeChild(AssemblyOutput.firstChild);
+	}
+
+	let inputText = getCleanText();
 	let symbolTable;
 	
-	if (currentCPU == 'EEP1') {
-		// dictionary where key is the symbol string and the value is an array with address and boolean to keep track of its usage
-		let symbolTable = createSymbolTable(inputText, Object.keys(currentAssembler.OPCODES)); // function that finds all symbols in input text
-		console.log(symbolTable);
-	}
+	try { // try to generate a symbol table, will throw errors by line if it fails
+		if (currentCPU == 'EEP1') {
+			// dictionary where key is the symbol string and the value is an array with address and boolean to keep track of its usage
+			let symbolTable = createSymbolTable(inputText, Object.keys(currentAssembler.OPCODES)); // function that finds all symbols in input text
+			console.log(symbolTable);
+		}
 	
-	let Message = "";
-	let lineCounter = 0;
-	for(i in inputText){
-		if(inputText[i] != ''){
-			try {
-				if (currentCPU == 'EEP1') {
+		let assemblerErrors = [];
 
-					let resolvedOpCode = currentAssembler.OpCodeResolver(inputText[i], outputEncoding, symbolTable); // beacuse EEP1 will always have symbol table
+		for(let [i, inputLine] of inputText.entries()){
+			let lineDiv = document.createElement('div');
+			lineDiv.setAttribute('id',`line${i}`)
+			AssemblyOutput.appendChild(lineDiv);
+			console.log(inputLine);
+			if(inputLine != ''){				
+				try {
 
-					if (resolvedOpCode.length > 1) {
-						// if there was a new symbol found, update the table with the line value
-						symbolTable[resolvedOpCode[1]][0] = lineCounter;
+					if (currentCPU == 'EEP1') {
+
+						let resolvedOpCode = currentAssembler.OpCodeResolver(inputLine, outputEncoding, symbolTable); // beacuse EEP1 will always have symbol table
+
+						lineDiv.innerHTML = `${resolvedOpCode}<br>`;
+
+					} else {
+						let resolvedOpCode = currentAssembler.OpCodeResolver(inputLine, outputEncoding);
+						lineDiv.innerHTML += `${resolvedOpCode}<br>`;
 					}
 
-					//console.log(symbolTable);
-					Message += `${resolvedOpCode[0]}\n`;
+				} catch(errs) {				
+					//errors found therefore update the download div so it doesn't work
+					downloadButton.setAttribute('downloadable', 'false');
 
-				} else {
-					Message += `${currentAssembler.OpCodeResolver(inputText[i], outputEncoding)}\n`;
+					errs.lineNumber = i;
+
+					assemblerErrors.push(errs);
 				}
-			} catch(errs) {				
-				//errors found therefore update the download div so it doesn't work
-				downloadButton.setAttribute('downloadable','false');
 
-				Message += `<span class="errorText">Error: </span>`;
-
-				if(errs.length > 0){	
-
-					// copy current line in ouput as a bunch of spans with id same as posisiton and line                    
-						// copy current line in ouput as a bunch of spans with id same as posisiton and line                    
-					// copy current line in ouput as a bunch of spans with id same as posisiton and line                    
-					splitLine = inputText[i].replace(/,/g,"").trim().split(" "); // extracting tokens
-					splitLine.push(" "); // add trailing white space for any missing tokens
-					// [ "MOV", "R0", "#", " " ]
 				
-					for(let [i2, tok] of splitLine.entries()){
-						let pos = inputText[i].indexOf(tok) + 1; // so that if tok not in array (white space not found) pos is 0 rather than -1                   
-
-						let errorSpan = document.createElement('span');
-						
-						if(errs[0] && errs[0].errToken === tok) {
-							// strange solution to display white space in span
-							tok = (tok == " ") ? '&nbsp;' : tok;                            
-								tok = (tok == " ") ? '&nbsp;' : tok;                            
-							tok = (tok == " ") ? '&nbsp;' : tok;                            
-							errorSpan.setAttribute('class', 'highlightError');
-							errorSpan.setAttribute('id', `error${i}${pos}`);                                  
-							errorSpan.appendChild(generatePopupHTML(errs.shift(), `popup${i}${pos}`)) // send first error object from array to function, then remove the element
-						} else {
-							errorSpan.setAttribute('id', `${i}${pos}`);
-						}
-										
-						errorSpan.innerHTML += tok;
-						Message += errorSpan.outerHTML;
-						Message += i2 < splitLine.length - 1 ? ' ' : '';
-
-					}
-					Message += '\n';
-				}
-				else {
-					Message += `${errs.message}\n`;
-				}
+			} else {
+				lineDiv.innerHTML = '<br>';
 			}
+			
+		}
+		
+		if(assemblerErrors.length > 0) {
+			throw new MultipleErrors('Multiple Assembler Errors detected!', assemblerErrors);
+		}
+		//finished going through input lines, check if all symbols have been used:
+		// if (currentCPU == 'EEP1') {
+		// 	for(let symbol in symbolTable){
+		// 		//console.log(symbolArr);
+		// 		if(!symbolTable[symbol][1]){
+		// 			//symbol hasn't been used:
+		// 			Message += `Warning: ${symbol} was never used\n`;
+		// 		}
+		// 	}
+		// }
 
-			// separate counter to keep track of lines of actual code
-			lineCounter++;
 
+		//save new output to local stoage
+		localStorage.setItem(`${currentCPU}message`, AssemblyOutput.innerHTML);
+		localStorage.setItem(`${currentCPU}encoding`, outputEncoding);
+
+	} catch(errs) {
+		if(errs instanceof MultipleErrors){	
+
+			showErrors(errs);
 		} else {
-			Message += '\n';
+
+			throw errs;
 		}
 	}
-
-	//finished going through input lines, check if all symbols have been used:
-	// if (currentCPU == 'EEP1') {
-	// 	for(let symbol in symbolTable){
-	// 		//console.log(symbolArr);
-	// 		if(!symbolTable[symbol][1]){
-	// 			//symbol hasn't been used:
-	// 			Message += `Warning: ${symbol} was never used\n`;
-	// 		}
-	// 	}
-	// }
-
-	Message = Message.replace(/\n/g, '<br>');
-
-	//save data to local stoage
-	localStorage.setItem(`${currentCPU}message`, Message);
-	localStorage.setItem(`${currentCPU}encoding`, outputEncoding);
-	AssemblyOutput.innerHTML = Message;
 }
 
 //function that is run when toggle is clicked
@@ -251,15 +335,14 @@ function updateLines(){
 	// set the innerHTML of the spans to allow for white spaces
 	let lineCounter = 0;
 	for(let i = 0; i < numLines; i++){
-			if(inputText[i] == ''){
-					document.getElementById(i).innerHTML = '|';
-			} else {
-					document.getElementById(i).innerHTML = `0x${lineCounter.toString(16)}`;
-					lineCounter++;
-			}
+		if(inputText[i] == ''){
+			document.getElementById(i).innerHTML = '|';
+		} else {
+			document.getElementById(i).innerHTML = `0x${lineCounter.toString(16)}`;
+			lineCounter++;
+		}
 	}
 
-	// Run assembler function could be run from here everytime the user inputs some new text
 	runAssembler();
 }
 

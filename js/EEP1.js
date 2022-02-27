@@ -1,3 +1,5 @@
+import { AssemblerError, MultipleErrors, InvalidInputError, InvalidOpcodeError, ImmOutRangeError, OperandSizeError, RegOutRangeError } from '../js/errorClasses.js';
+
 const REGISTER_COUNT = 8;
 const REGISTER_BITS = Math.log2(REGISTER_COUNT);
 
@@ -205,7 +207,7 @@ export function OpCodeResolver(Line, encoding = 2, symbolTable){
             tokensCounter++;
         }
 
-        if (errors.length != 0) throw errors;
+        if (errors.length != 0) throw new MultipleErrors('Assembler errors detected!', errors);
 
         if(encoding == 16){
             // convert binary number back to int 
@@ -224,6 +226,6 @@ export function OpCodeResolver(Line, encoding = 2, symbolTable){
     } else {
         // catch in runAssembler expecting error array
         errors.push(new InvalidOpcodeError((tokens[0] ? tokens[0] : ' '))); // trick to show whitespace in output
-        throw errors; 
+        throw new MultipleErrors('Assembler errors detected!', errors);
     }
 }

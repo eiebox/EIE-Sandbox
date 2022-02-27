@@ -1,3 +1,5 @@
+import { AssemblerError, MultipleErrors, InvalidInputError, InvalidOpcodeError, ImmOutRangeError, OperandSizeError, RegOutRangeError } from '../js/errorClasses.js';
+
 const ConversionDictOpcode = {
     'MOV': '000',
     'ADD': '001',
