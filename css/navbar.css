@@ -5,39 +5,21 @@
         padding: 1em .3em;
     }
     #Logo {
-        height: 13px
+        height: 13px;
+        padding: 5px;
     }
-    .dropdown .dropbtn {
-        font-size: .7rem;
+    .dropdown #dropBtn {
+        font-size: 1rem;
         padding: 1em .3em;
     }
     .dropdown-content a {
-        font-size: .7rem;
-        padding: .3em .5em;
-    }
-} 
-
-/* For devices with width between 481px and 768px, like larger phones and portrait tablets */
-@media only screen and (min-width: 481px) {
-    .TopNavBar a {
-        font-size: .8rem;
-        padding: .5em .3em;
-    }
-    #Logo {
-        height: 15px
-    }
-    .dropdown .dropbtn {
-        font-size: .8rem;
-        padding: .5em .3em;
-    }
-    .dropdown-content a {
-        font-size: .8rem;
+        font-size: 1.5rem;
         padding: .3em .5em;
     }
 } 
 
 /* For devices with width between 769px and 1279px, like landscape tablets and laptops */
-@media only screen and (min-width: 769px) {
+@media only screen and (min-width: 481px) {
     .TopNavBar a {
         font-size: .9rem;
         padding: .5em .4em;
@@ -45,7 +27,7 @@
     #Logo {
         height: 17px
     }
-    .dropdown .dropbtn {
+    .dropdown #dropBtn {
         font-size: .9rem;
         padding: .5em .4em;
     }
@@ -64,7 +46,7 @@
     #Logo {
         height: 19px
     }
-    .dropdown .dropbtn {
+    .dropdown #dropBtn {
         font-size: 1.05rem;
         padding: .5em .5em;
     }
@@ -104,7 +86,7 @@ html, body {
     text-decoration: none;
 }
 
-.TopNavBar a:hover #Logo, .TopNavBar a:hover, .dropdown:hover .dropbtn, .dropbtn:focus {
+.TopNavBar a:hover #Logo, .TopNavBar a:hover, .dropdown:hover #dropBtn, #dropBtn:focus {
    background-color: #363636;
 }
 
@@ -120,7 +102,7 @@ html, body {
 }
 
   
-.dropdown .dropbtn {
+.dropdown #dropBtn {
     text-align: center;
     color: white;
     font-family: monospace;

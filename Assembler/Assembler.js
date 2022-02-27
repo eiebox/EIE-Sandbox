@@ -4,7 +4,9 @@ import { AssemblerError, MultipleErrors, InvalidInputError, InvalidOpcodeError, 
 const AssemblyInput = document.getElementById('AssemblyInput');
 const lineNumberDiv = document.getElementById('lineNumbers');
 const AssemblyOutput = document.getElementById('AssemblyOutput');
-const downloadButton = document.getElementById('downloadBttn');
+const downloadButton = document.getElementById('downloadBtn');
+const binhexCheckbox = document.getElementById('binhex');
+const assemblerBtn = document.getElementById('assemblerBtn');
 
 // Synchronisse scrolling array (elems to sync)
 const syncScroll = [AssemblyInput, lineNumberDiv, AssemblyOutput];
@@ -27,7 +29,7 @@ for(let elem of syncScroll)	elem.addEventListener('scroll', syncScrollFunc); // 
 function initAssembler() {
 	// returns object with all GET parameters in current url string
 	const urlParams = new URLSearchParams(window.location.search);
-	currentCPU = urlParams.get('cpu');
+	currentCPU = urlParams.get('cpu').toUpperCase();
 	if (!assemblerVersions.includes(currentCPU)) alert('Invalid Assembler Version! Undefined behaviour.');
 
 	import(`../js/${currentCPU}.js`)
@@ -36,11 +38,15 @@ function initAssembler() {
 			currentAssembler = module;
 
 			// assign these listeners that can only work after assembler initialisation
-			downloadButton.addEventListener('click', downloadFile); // download button
+			binhexCheckbox.addEventListener('change', switchModes); // binhex selection, needs module loaded as runs assembler
+			assemblerBtn.addEventListener('click', runAssembler)
+			assemblerBtn.classList.remove('disabled'); 
+			downloadButton.addEventListener('click', downloadFile); 
 			AssemblyInput.addEventListener('input', updateLines); // text area
 			updateLines();
 		}, err => { 
-			alert(`Assembler module import failed! Undefined behaviour.\nDetails: ${err.message}`); 
+			alert(`Assembler module import failed! Undefined behaviour.\nDetails: ${err.message}`);
+			assemblerBtn.classList.add('disabled');
 		});
 
 	// while the file is loading, do all this stuff underneath (None of it depends on assembler functions)
@@ -69,7 +75,7 @@ function getCleanText() {
 	for (let i = 0; i < inputText.length; i++) {
 		if (inputText[i].includes('//')) inputText[i] = inputText[i].substring(0, inputText[i].indexOf('//')); // works for inline comments as well
 
-		inputText[i] = inputText[i].replace(/  +/g, ' ').trim();
+		inputText[i] = inputText[i].replace(/  +/g, ' ').replace(/,/g, '').trim();
 	}
 
 	return inputText;
@@ -95,27 +101,31 @@ function createSymbolTable(inputText, opcodes) {
 		if (line !== '') {			
 			line = line.split(' '); // split each line into array of tokens
 			const FIRST_TOKEN = line[0];
-			
-			if (opcodes.includes(FIRST_TOKEN.slice(0, -1))) { // label is an opcode
-				let error = new AssemblerError('Invalid label name!\nReserved for OPCODE.', FIRST_TOKEN);
-
-				error.lineNumber = i;
-				errorArray.push(error);
-			}
- 
-			if (symbolTable.get(FIRST_TOKEN.slice(0, -1))) { // entry already exists in symbol table
-				let error = new AssemblerError('Invalid label name!\nSymbol is a redefinition.', FIRST_TOKEN);
-
-				error.lineNumber = i;
-				errorArray.push(error);
-			}
 
 			if (FIRST_TOKEN[FIRST_TOKEN.length - 1] === ':') { // last char of first token
-				symbolTable.set(FIRST_TOKEN.slice(0, -1), {address: address, used: false});
+				let valid = true;				
+				if (opcodes.includes(FIRST_TOKEN.slice(0, -1))) { // label is an opcode
+					valid = false;
+					let error = new AssemblerError('Invalid label name!\nReserved for OPCODE.', FIRST_TOKEN);
+	
+					error.lineNumber = i;
+					errorArray.push(error);
+				}
+	 
+				if (symbolTable.get(FIRST_TOKEN.slice(0, -1))) { // entry already exists in symbol table
+					valid = false;
+					let error = new AssemblerError('Invalid label name!\nSymbol is a redefinition.', FIRST_TOKEN);
+	
+					error.lineNumber = i;
+					errorArray.push(error);
+				}
 
-				// console.log(inputText[i].replace(`${FIRST_TOKEN}`,''))
-				inputText[i] = inputText[i].replace(`${FIRST_TOKEN}`,''); // remove symbol from line
+				if (valid) {
+					symbolTable.set(FIRST_TOKEN.slice(0, -1), {address: address, used: false});
+					inputText[i] = inputText[i].replace(`${FIRST_TOKEN}`,'').trim(); // remove symbol from line and extra whitespace
+				}
 			}
+			
 
 			address++;
 		}
@@ -127,7 +137,7 @@ function createSymbolTable(inputText, opcodes) {
 
 function attachErrorToDiv(tokenError, div, inputLine) {
 	// copy current line in ouput as a bunch of spans with id same as posisiton and line                    
-	let splitLine = inputLine.replace(/,/g,'').trim().split(" "); // extracting tokens
+	let splitLine = inputLine.trim().split(' '); // extracting tokens
 	splitLine.push(' '); // add trailing white space for any missing tokens
 	// [ "MOV", "R0", "#", " " ]
 
@@ -165,11 +175,11 @@ function showErrors(errors){
 		let lineDiv = document.getElementById(`line${errorLine.lineNumber}`); // div created in run assembler
 		lineDiv.innerHTML = `<span class="errorText">Error: </span>`;
 
-		if(errorLine instanceof MultipleErrors) { // OpCodeResolver errors
-
+		if(errorLine instanceof MultipleErrors) { 
+			// OpCodeResolver errors
 			attachErrorToDiv(errorLine.errorArray, lineDiv, inputText[errorLine.lineNumber]);
-		} else if (errorLine instanceof AssemblerError) { // symbol table errors
-
+		} else if (errorLine instanceof AssemblerError) { 
+			// symbol table errors
 			attachErrorToDiv([errorLine], lineDiv, inputText[errorLine.lineNumber]);
 		} else { // unknown error throw unhandled
 			throw errors;
@@ -205,8 +215,6 @@ function runAssembler(){
 		if (currentCPU == 'EEP1') {
 			// dictionary where key is the symbol string and the value is an array with address and boolean to keep track of its usage
 			symbolTable = createSymbolTable(inputText, Object.keys(currentAssembler.OPCODES)); // function that finds all symbols in input text
-			console.log(symbolTable);
-			console.log(inputText);
 		}
 	
 		let assemblerErrors = [];
@@ -252,7 +260,6 @@ function runAssembler(){
 			warningDiv.setAttribute('id', 'warnings');
 
 			for(const [symbol, obj] of symbolTable){
-				console.log(obj);
 				if(!obj.used){ // symbol hasn't been used:				
 					warningDiv.innerHTML += `Warning: ${symbol} was never used<br>`;
 				}
@@ -326,7 +333,7 @@ function updateLines(){
 		if(inputText[i] == ''){
 			document.getElementById(i).innerHTML = '|';
 		} else {
-			document.getElementById(i).innerHTML = `0x${lineCounter.toString(16)}`;
+			document.getElementById(i).innerHTML = `0x${lineCounter.toString(16).toUpperCase()}`;
 			lineCounter++;
 		}
 	}
@@ -338,7 +345,7 @@ function updateLines(){
 function syncScrollFunc(){
 	let top = this.scrollTop;
 
-	for(elem of syncScroll){
+	for(let elem of syncScroll){
 			elem.scrollTop = top;
 	}
 }
@@ -350,20 +357,23 @@ function downloadFile() {
 	// check if current assembly is actually downladable
 	if(downloadButton.getAttribute('downloadable') == 'true'){
 		console.log('downloading file');
+		//set encoding to Hex and re run the assembler:
+		if (outputEncoding == 2) {
+			let checkbox = document.getElementById('binhex');
+			checkbox.checked = !checkbox.checked;
+			switchModes();
+		}
 		
 		// generate string of file to be downloaded
-		let content = AssemblyOutput.innerHTML;
-
-		content = content.split('<br>');
+		let content = Array.from(AssemblyOutput.children);
 
 		let outputFile = '';
-
+		let addressCounter = 0;
 		for(let i = 0; i < numLines; i++){
-			if(content[i] == ''){
-				// skip line and keep counter the same
-				i--;
-			} else {
-				outputFile += `0x${i.toString(16)}\t${content[i]}\n`;
+			let outputLine = content[i].innerHTML.replace('<br>','');
+			if(outputLine != '') {
+				outputFile += `0x${addressCounter.toString(16)}\t${outputLine}\n`;
+				addressCounter += 1;
 			}
 		}
 

@@ -1,16 +1,15 @@
-/* For devices with width of 480px and less, like phones */
-@media only screen and (max-width: 480px) {
+/* For devices with width of 1280px and more, like desktop computers */
+@media only screen and (min-width: 1280px) {
     .TextAreas{
-        height: calc(91.5vh - 6.8em - 115px);
+        height: calc(91.5vh - 6.8em);
     }
     .h1{
         font-size: 2rem;
     }
-    .assemblerbtn {
-        margin-top: 1em;
+    #assemblerBtn {
+        margin-top: .8em;
         padding-top: 3vh;
         padding-bottom: 3vh;
-        font-size: 2em;
         width: 100%;
     }
     .AssemblerControls h1 {
@@ -50,7 +49,12 @@
         transition: 0.4s
     }
 }
-/* For devices with width between 481px and 768px, like larger phones and portrait tablets */
+
+.disabled {
+    cursor: not-allowed;
+}
+
+/* For devices with width between 769px and 1279px, like landscape tablets and laptops */
 @media only screen and (min-width: 481px) {
     .TextAreas{
         height: calc(91.5vh - 6.8em);
@@ -58,7 +62,7 @@
     .h1{
         font-size: 2rem;
     }
-    .assemblerbtn {
+    #assemblerBtn {
         margin-top: 1em;
         padding-top: 3vh;
         padding-bottom: 3vh;
@@ -94,61 +98,20 @@
         transition: 0.4s
     }
 }
-/* For devices with width between 769px and 1279px, like landscape tablets and laptops */
-@media only screen and (min-width: 769px) {
+
+/* For devices with width of 480px and less, like phones */
+@media only screen and (max-width: 480px) {
     .TextAreas{
-        height: calc(91.5vh - 6.8em);
+        height: calc(91.5vh - 6.8em - 115px);
     }
     .h1{
         font-size: 2rem;
     }
-    .assemblerbtn {
+    #assemblerBtn {
         margin-top: 1em;
         padding-top: 3vh;
         padding-bottom: 3vh;
-        width: 100%;
-    }
-    .AssemblerControls h1 {
-        font-size: 1rem;
-        margin: .5rem;
-    }
-    .AssemblerControls .toggle {
-        margin-right: 10px;
-    }
-    .switchLabel {
-        margin: 1vmin;
-    }
-    .switchBody {
-        width: 40px;
-    }
-    .switchBody input {
-        opacity: 0;
-        width: 10px;
-        height: 0;
-    }
-    .slider:before {
-        height: 10px;
-        width: 10px;
-        bottom: 5px;
-        transition: .4s; 
-    }
-    input:checked + .slider >#tc {
-        transform: translateX(25px);
-        transition: 0.4s
-    }
-}
-/* For devices with width of 1280px and more, like desktop computers */
-@media only screen and (min-width: 1280px) {
-    .TextAreas{
-        height: calc(91.5vh - 6.8em);
-    }
-    .h1{
-        font-size: 2rem;
-    }
-    .assemblerbtn {
-        margin-top: .8em;
-        padding-top: 3vh;
-        padding-bottom: 3vh;
+        font-size: 2em;
         width: 100%;
     }
     .AssemblerControls h1 {
@@ -213,14 +176,14 @@ h1{
     font-weight: lighter;
     color: white;
 }
-.assemblerbtn {
+#assemblerBtn {
     background-color: black;
     border: 2px black;
     color: white;
     display: inline-block;
     font-family: monospace;
 }
-.assemblerbtn:active{
+#assemblerBtn:active{
     background-color: #272727;
 }
 button {
@@ -244,6 +207,8 @@ button {
 
 textarea.textArea  {
     text-transform: uppercase;
+    scrollbar-width: none;
+    font-family: monospace;
 }
 
 div.textArea {
@@ -332,7 +297,7 @@ html, body {
     width: 100%;
     min-height: 100%;
     min-width: 100%;
-    background-color: #222222;
+    background-color: #333333;
 }
 .switchLabel {
     font-family: monospace;
@@ -359,21 +324,22 @@ input:checked + .slider {
     position: absolute;
 }
 
-.downloadBttn {
-    width: 1.4em;
+.downloadBtn {
+    cursor: pointer;
+    width: 20px;
+    height: 25px;
     margin: 0.5em;
     /* display flex so that random whitespace doesn't appear underneath the image */
     display: flex;
 }
 
-.downloadBttn:hover {
+.downloadBtn:hover {
     box-shadow: 4px 4px 7px  #000000 ;
 }
 
 .binaryFile {
-    fill-rule:evenodd;
-    clip-rule:evenodd;
-    fill: white;
+    flex-shrink: 0;
+    filter: invert(100%) sepia(100%) saturate(0%) hue-rotate(135deg) brightness(110%) contrast(101%);
 }
 
 /* ERROR HIGHLIGHTING DON'T DELETE THIS */

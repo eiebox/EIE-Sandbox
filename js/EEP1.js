@@ -20,7 +20,9 @@ export const OPCODES = { // OPCODE structure is [ OPCODE, MAX_OPERANDS, OPERAND_
     "JHI": [0xCC, 1, '#Imm8'],
     "JLS": [0xCD, 1, '#Imm8'],
     "JSR": [0xCE, 1, '#Imm8'],
-    "RET": [0xCF00, 0],
+    "RET": [0xCF00, 0], // JMP N set to 1
+    "0": [0xC100, 0], // JMP N set to 1
+    "NOP": [0xC100, 0],
 // ALU
     "MOV": [0x0, 3, "Ra", "Op"],
     "ADD": [0x1, 3, 'Ra', 'Op'],
