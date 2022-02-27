@@ -113,6 +113,8 @@ function createSymbolTable(inputText, opcodes) {
 
 			if (FIRST_TOKEN[FIRST_TOKEN.length - 1] === ':') { // last char of first token
 				symbolTable.set(FIRST_TOKEN.slice(0, -1), {address: address, used: false});
+				// console.log(inputText[i].replace(`${FIRST_TOKEN}`,''))
+				inputText[i] = inputText[i].replace(`${FIRST_TOKEN}`,''); // remove symbol from line definition
 			}
 
 			address++;
@@ -204,6 +206,7 @@ function runAssembler(){
 			// dictionary where key is the symbol string and the value is an array with address and boolean to keep track of its usage
 			let symbolTable = createSymbolTable(inputText, Object.keys(currentAssembler.OPCODES)); // function that finds all symbols in input text
 			console.log(symbolTable);
+			console.log(inputText);
 		}
 	
 		let assemblerErrors = [];

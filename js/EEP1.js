@@ -162,9 +162,9 @@ export function OpCodeResolver(Line, encoding = 2, symbolTable){
             
             if(symbolTable && Object.keys(symbolTable).includes(tokens[tokensCounter])) { //check if symbol table is defined and if symbol table is defined for current token
                 // symbol has been used therefore it's set to true
-                symbolTable[tokens[tokensCounter]][1] = true;
+                symbolTable[tokens[tokensCounter]]['used'] = true;
                 
-                tokens[tokensCounter] = `#${symbolTable[tokens[tokensCounter]][0]}`;
+                tokens[tokensCounter] = `#${symbolTable[tokens[tokensCounter]]['address']}`;
             }
 
             if (instruction[i] == "#Imm8"){
