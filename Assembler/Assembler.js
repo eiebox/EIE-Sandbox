@@ -103,7 +103,16 @@ function createSymbolTable(inputText, opcodes) {
 			const FIRST_TOKEN = line[0];
 
 			if (FIRST_TOKEN[FIRST_TOKEN.length - 1] === ':') { // last char of first token
-				let valid = true;				
+				let valid = true;
+				
+				if (line.length < 2) {
+					valid = false;
+					let error = new AssemblerError('OPCODE required after label.', FIRST_TOKEN);
+
+					error.lineNumber = i;
+					errorArray.push(error);
+				}
+
 				if (opcodes.includes(FIRST_TOKEN.slice(0, -1))) { // label is an opcode
 					valid = false;
 					let error = new AssemblerError('Invalid label name!\nReserved for OPCODE.', FIRST_TOKEN);
@@ -194,7 +203,7 @@ function runAssembler(){
 	localStorage.setItem(`${currentCPU}input`, AssemblyInput.value); // update input text save
 	
 	// reset attribute value 
-	downloadButton.setAttribute('downloadable', 'true');
+	downloadButton.setAttribute('downloadable', 'false');
 
 	// remove all childs of div to clear the output (better than innerHtml = '' which causes memory leaks)
 	while (AssemblyOutput.firstChild) {
@@ -268,6 +277,7 @@ function runAssembler(){
 			if (warningDiv.innerHTML != '') AssemblyOutput.appendChild(warningDiv);
 		}
 
+		downloadButton.setAttribute('downloadable', 'true'); // is downloadable only if nothing thrown up to here
 
 		//save new output to local stoage
 		localStorage.setItem(`${currentCPU}message`, AssemblyOutput.innerHTML);
