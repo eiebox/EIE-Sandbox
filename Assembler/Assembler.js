@@ -93,19 +93,19 @@ function createSymbolTable(inputText, opcodes) {
 
 	for (let [i, line] of inputText.entries()) {		
 		if (line !== '') {
-			const FIRST_TOKEN = line[0];
+			const FIRST_TOKEN = line;
 
 			line = line.split(' '); // split each line into array of tokens
 			
 			if (opcodes.includes(FIRST_TOKEN.slice(0, -1))) { // label is an opcode
-				let error = new AssemblerError('Invalid label name! Name is reserved for OPCODE.', FIRST_TOKEN);
+				let error = new AssemblerError('Invalid label name!\nReserved for OPCODE.', FIRST_TOKEN);
 
 				error.lineNumber = i;
 				errorArray.push(error);
 			}
  
-			if (symbolTable.get(FIRST_TOKEN)) { // entry already exists in symbol table
-				let error = new AssemblerError('Invalid label name! Symbol is a redefinition.', FIRST_TOKEN);
+			if (symbolTable.get(FIRST_TOKEN.slice(0, -1))) { // entry already exists in symbol table
+				let error = new AssemblerError('Invalid label name!\nSymbol is a redefinition.', FIRST_TOKEN);
 
 				error.lineNumber = i;
 				errorArray.push(error);
@@ -123,77 +123,52 @@ function createSymbolTable(inputText, opcodes) {
 	return symbolTable;
 }
 
+function attachErrorToDiv(tokenError, div, inputLine) {
+	// copy current line in ouput as a bunch of spans with id same as posisiton and line                    
+	let splitLine = inputLine.replace(/,/g,'').trim().split(" "); // extracting tokens
+	splitLine.push(' '); // add trailing white space for any missing tokens
+	// [ "MOV", "R0", "#", " " ]
+
+	for(let [i, token] of splitLine.entries()){
+		let pos = inputLine.indexOf(token) + 1; // so that if tok not in array (white space not found) pos is 0 rather than -1                   
+
+		let errorSpan = document.createElement('span');
+		
+		if(tokenError[0] && tokenError[0].errToken === token) {
+			
+			token = (token == " ") ? '&nbsp;' : token; // strange solution to display white space in span
+
+			errorSpan.setAttribute('class', 'highlightError');
+			errorSpan.setAttribute('id', `error${i}${pos}`);   
+
+			errorSpan.appendChild(generatePopupHTML(tokenError.shift(), `popup${i}${pos}`)) // send first error object from array to function, then remove the element
+		
+		} else { 
+			errorSpan.setAttribute('id', `${i}${pos}`);
+		}
+						
+		errorSpan.innerHTML += token;
+		div.appendChild(errorSpan);
+		div.innerHTML += i < splitLine.length - 1 ? ' ' : ''; // kind of a botch
+
+	}
+}
+
 // expects list of errors by line 
 function showErrors(errors){
 	let inputText = getCleanText();
 
-	console.log(Object.getPrototypeOf(errors));
 	for (let errorLine of errors.errorArray) {
-		console.log(Object.getPrototypeOf(errorLine));
 
 		let lineDiv = document.getElementById(`line${errorLine.lineNumber}`); // div created in run assembler
-		lineDiv.innerHTML += `<span class="errorText">Error: </span>`;
+		lineDiv.innerHTML = `<span class="errorText">Error: </span>`;
 
 		if(errorLine instanceof MultipleErrors) { // OpCodeResolver errors
-			let tokenError = errorLine.errorArray;
-			// copy current line in ouput as a bunch of spans with id same as posisiton and line                    
-			let splitLine = inputText[errorLine.lineNumber].replace(/,/g,'').trim().split(" "); // extracting tokens
-			splitLine.push(' '); // add trailing white space for any missing tokens
-			// [ "MOV", "R0", "#", " " ]
-		
-			for(let [i, token] of splitLine.entries()){
-				let pos = inputText[errorLine.lineNumber].indexOf(token) + 1; // so that if tok not in array (white space not found) pos is 0 rather than -1                   
 
-				let errorSpan = document.createElement('span');
-				
-				if(tokenError[0] && tokenError[0].errToken === token) {
-					
-					token = (token == " ") ? '&nbsp;' : token; // strange solution to display white space in span
-
-					errorSpan.setAttribute('class', 'highlightError');
-					errorSpan.setAttribute('id', `error${i}${pos}`);   
-
-					errorSpan.appendChild(generatePopupHTML(tokenError.shift(), `popup${i}${pos}`)) // send first error object from array to function, then remove the element
-				
-				} else { 
-					errorSpan.setAttribute('id', `${i}${pos}`);
-				}
-								
-				errorSpan.innerHTML += token;
-				lineDiv.appendChild(errorSpan);
-				lineDiv.innerHTML += i < splitLine.length - 1 ? ' ' : ''; // kind of a botch
-
-			}
+			attachErrorToDiv(errorLine.errorArray, lineDiv, inputText[errorLine.lineNumber]);
 		} else if (errorLine instanceof AssemblerError) { // symbol table errors
 
-			// copy current line in ouput as a bunch of spans with id same as posisiton and line                    
-			let splitLine = inputText[errorLine.lineNumber].replace(/,/g,'').trim().split(" "); // extracting tokens
-			// [ "MOV", "R0", "#", " " ]
-		
-			for(let [i, token] of splitLine.entries()){
-				let pos = inputText[errorLine.lineNumber].indexOf(token) + 1; // so that if tok not in array (white space not found) pos is 0 rather than -1                   
-
-				let errorSpan = document.createElement('span');
-				
-				if(errorLine.errToken === token) {
-					
-					token = (token == " ") ? '&nbsp;' : token; // strange solution to display white space in span
-
-					errorSpan.setAttribute('class', 'highlightError');
-					errorSpan.setAttribute('id', `error${i}${pos}`);   
-
-					errorSpan.appendChild(generatePopupHTML(tokenError.errToken, `popup${i}${pos}`)) // send first error object from array to function, then remove the element
-				
-				} else { 
-					errorSpan.setAttribute('id', `${i}${pos}`);
-				}
-								
-				errorSpan.innerHTML += token;
-				lineDiv.appendChild(errorSpan);
-				lineDiv.innerHTML += i < splitLine.length - 1 ? ' ' : ''; // kind of a botch
-
-			}
-
+			attachErrorToDiv([errorLine], lineDiv, inputText[errorLine.lineNumber]);
 		} else { // unknown error throw unhandled
 			throw errors;
 		}
@@ -201,7 +176,9 @@ function showErrors(errors){
 }
 
 function runAssembler(){
-	
+	let inputText = getCleanText(); // array of input lines with all extra stuff removed
+
+
 	localStorage.setItem(`${currentCPU}input`, AssemblyInput.value); // update input text save
 	
 	// reset attribute value 
@@ -211,8 +188,15 @@ function runAssembler(){
 	while (AssemblyOutput.firstChild) {
 		AssemblyOutput.removeChild(AssemblyOutput.firstChild);
 	}
+	// create new divs for every line
+	for(let [i, _inputLine] of inputText.entries()){
+		let lineDiv = document.createElement('div');
+		lineDiv.setAttribute('id',`line${i}`)
+		lineDiv.innerHTML = '<br>';
+		AssemblyOutput.appendChild(lineDiv);
+	}
 
-	let inputText = getCleanText();
+
 	let symbolTable;
 	
 	try { // try to generate a symbol table, will throw errors by line if it fails
@@ -225,10 +209,8 @@ function runAssembler(){
 		let assemblerErrors = [];
 
 		for(let [i, inputLine] of inputText.entries()){
-			let lineDiv = document.createElement('div');
-			lineDiv.setAttribute('id',`line${i}`)
-			AssemblyOutput.appendChild(lineDiv);
-			console.log(inputLine);
+			let lineDiv = document.getElementById(`line${i}`);
+			
 			if(inputLine != ''){				
 				try {
 

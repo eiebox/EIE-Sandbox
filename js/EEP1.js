@@ -56,7 +56,7 @@ function Register(token){
             if (regNum < REGISTER_COUNT && regNum >= 0) { //check register size
                 return regNum.toString(2).padStart(REGISTER_BITS, "0");//pad with zeros to make it 3bit long
             } else {
-                errors.push(new RegOutRangeError(REGISTER_COUNT - 1, token)); 
+                throw new RegOutRangeError(REGISTER_COUNT - 1, token); 
             }
 
         } else {
