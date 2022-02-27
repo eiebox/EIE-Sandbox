@@ -356,7 +356,6 @@ function syncScrollFunc(){
 function downloadFile() {
 	// check if current assembly is actually downladable
 	if(downloadButton.getAttribute('downloadable') == 'true'){
-		console.log('downloading file');
 		//set encoding to Hex and re run the assembler:
 		if (outputEncoding == 2) {
 			let checkbox = document.getElementById('binhex');
@@ -380,7 +379,6 @@ function downloadFile() {
 		// https://ourcodeworld.com/articles/read/189/how-to-create-a-file-and-generate-a-download-with-javascript-in-the-browser-without-a-server
 		// actual downloading bit
 		let element = document.createElement('a');
-		console.log(outputFile);
 		element.setAttribute('href', `data:text/plain;charset=utf-8,${outputFile}`);
 		element.setAttribute('download', `${currentCPU}_file.ram`);
 
