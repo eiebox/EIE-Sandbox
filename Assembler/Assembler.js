@@ -29,8 +29,8 @@ for(let elem of syncScroll)	elem.addEventListener('scroll', syncScrollFunc); // 
 function initAssembler() {
 	// returns object with all GET parameters in current url string
 	const urlParams = new URLSearchParams(window.location.search);
-	currentCPU = urlParams.get('cpu').toUpperCase();
-	if (!assemblerVersions.includes(currentCPU)) alert('Invalid Assembler Version! Undefined behaviour.');
+	currentCPU = urlParams.get('cpu')?.toUpperCase();
+	if (!assemblerVersions.includes(currentCPU)) alert('Invalid Assembler Version! Please select version from the drop-down above. Undefined behaviour.');
 
 	import(`../js/${currentCPU}.js`)
 		.then(module => {
@@ -389,7 +389,7 @@ function downloadFile() {
 		// https://ourcodeworld.com/articles/read/189/how-to-create-a-file-and-generate-a-download-with-javascript-in-the-browser-without-a-server
 		// actual downloading bit
 		let element = document.createElement('a');
-		element.setAttribute('href', `data:text/plain;charset=utf-8,${outputFile}`);
+		element.setAttribute('href', `data:text/plain;charset=utf-8,${encodeURIComponent(outputFile)}`);
 		element.setAttribute('download', `${currentCPU}_file.ram`);
 
 		element.style.display = 'none';
