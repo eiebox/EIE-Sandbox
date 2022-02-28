@@ -172,7 +172,7 @@
 }
 
 h1{
-    font-family: monospace;
+    font-family: Courier, monospace;
     font-weight: lighter;
     color: white;
 }
@@ -181,7 +181,7 @@ h1{
     border: 2px black;
     color: white;
     display: inline-block;
-    font-family: monospace;
+    font-family: Courier, monospace;
 }
 #assemblerBtn:active{
     background-color: #272727;
@@ -190,7 +190,7 @@ button {
     background-color: black;
     color: white;
     display: inline-block;
-    font-family: monospace;
+    font-family: Courier, monospace;
 }
 
 /* TEXT AREA STUFF */
@@ -198,21 +198,18 @@ button {
 .TextAreas{
     display: flex;
     color: white;
-    font-family: monospace;    
+    font-family: Courier, monospace;    
     font-size: 1.5em;
     justify-content: center;
     flex-direction: row;
     flex-wrap: nowrap;
+    scrollbar-width: thin;
 }
 
 textarea.textArea  {
     text-transform: uppercase;
     scrollbar-width: none;
-    font-family: monospace;
-}
-
-div.textArea {
-    white-space: nowrap;
+    font-family: Courier, monospace;
 }
 
 .textArea {
@@ -222,7 +219,10 @@ div.textArea {
     padding: 5px;    
     resize: none;
     border: 1px solid black;
-    overflow-y: auto;
+
+    white-space: pre;
+    overflow-wrap: normal;
+    overflow-y: scroll;
     overflow-x: auto;
 
     font-size: inherit;
@@ -234,6 +234,15 @@ div.textArea {
 
     flex-grow: 1;
 }
+
+textarea::-webkit-scrollbar {
+    display: none;
+}
+
+#AssemblyOutput {
+    overflow-x: hidden;
+}
+
 
 .textArea:focus{
     outline: none;
@@ -280,7 +289,7 @@ div.textArea {
     margin: 0 0.5em;
 }
 .AssemblerControls h1 {
-    font-family: monospace;
+    font-family: Courier, monospace;
     font-weight: lighter;
     color: white;
 }
@@ -300,7 +309,7 @@ html, body {
     background-color: #333333;
 }
 .switchLabel {
-    font-family: monospace;
+    font-family: Courier, monospace;
     font-weight: lighter;
     color: white;
     margin: 1em;
