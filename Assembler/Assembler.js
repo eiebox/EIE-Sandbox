@@ -242,7 +242,7 @@ function runAssembler(){
 
 					} else {
 						let resolvedOpCode = currentAssembler.OpCodeResolver(inputLine, outputEncoding);
-						lineDiv.innerHTML += `${resolvedOpCode}<br>`;
+						lineDiv.innerHTML = `${resolvedOpCode}<br>`;
 					}
 
 				} catch(errs) {				
