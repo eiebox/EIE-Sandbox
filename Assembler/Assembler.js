@@ -12,7 +12,7 @@ const assemblerBtn = document.getElementById('assemblerBtn');
 const syncScroll = [AssemblyInput, lineNumberDiv, AssemblyOutput];
 
 // Assembler versions
-const assemblerVersions = ['EEP0', 'EEP1'];
+const assemblerVersions = ['EEP0', 'EEP1', 'EEP2'];
 
 // Assembler Globals
 let outputEncoding = 2;
@@ -221,7 +221,7 @@ function runAssembler(){
 	let symbolTable;
 	
 	try { // try to generate a symbol table, will throw errors by line if it fails
-		if (currentCPU == 'EEP1') {
+		if (currentCPU != 'EEP0') {
 			// dictionary where key is the symbol string and the value is an array with address and boolean to keep track of its usage
 			symbolTable = createSymbolTable(inputText, Object.keys(currentAssembler.OPCODES)); // function that finds all symbols in input text
 		}
@@ -234,7 +234,7 @@ function runAssembler(){
 			if(inputLine != ''){				
 				try {
 
-					if (currentCPU == 'EEP1') {
+					if (currentCPU != 'EEP0') {
 
 						let resolvedOpCode = currentAssembler.OpCodeResolver(inputLine, outputEncoding, symbolTable); // beacuse EEP1 will always have symbol table
 
@@ -264,7 +264,7 @@ function runAssembler(){
 			throw new MultipleErrors('Multiple Assembler Errors detected!', assemblerErrors);
 		}
 		//finished going through input lines, check if all symbols have been used:
-		if (currentCPU == 'EEP1') {
+		if (currentCPU != 'EEP0') {
 			let warningDiv = document.createElement('div');
 			warningDiv.setAttribute('id', 'warnings');
 
