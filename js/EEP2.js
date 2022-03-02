@@ -1,4 +1,4 @@
-import { AssemblerError, MultipleErrors, InvalidInputError, InvalidOpcodeError, ImmOutRangeError, OperandSizeError, RegOutRangeError } from '../js/errorClasses.js';
+import { AssemblerError, MultipleErrors, InvalidInputError, InvalidOpcodeError, ImmOutRangeError, OperandSizeError, RegOutRangeError } from './errorClasses.js';
 
 const REGISTER_COUNT = 8;
 const REGISTER_BITS = Math.log2(REGISTER_COUNT);
@@ -21,8 +21,7 @@ export const OPCODES = { // OPCODE structure is [ OPCODE, MAX_OPERANDS, OPERAND_
     "JLS": [0xCD, 1, '#Imm8'],
     "JSR": [0xCE, 1, '#Imm8'],
     "RET": [0xCF00, 0], // JMP N set to 1
-    "0": [0xC100, 0], // JMP N set to 1
-    "NOP": [0xC100, 0],
+    "EXT": [0xC1, 1, '#Imm8'],
 // ALU
     "MOV": [0x0, 3, "Ra", "Op"],
     "ADD": [0x1, 3, 'Ra', 'Op'],
