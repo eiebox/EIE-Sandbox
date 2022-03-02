@@ -78,7 +78,25 @@
         </div>
     </div>
     <div class="TextAreas">
-        <textarea id="AssemblyInput" class="textArea" rows="10" spellcheck="false">// Type text here</textarea>   
+        <textarea id="AssemblyInput" class="textArea" rows="10" spellcheck="false">
+            // SAMPLE EEP2 PROGRAM 
+            // (USE TOM CLARKE BUTTON TO SWITCH BETWEEN HEX AND BINARY, OR USE CTRL + SPACE)
+            MOV R0, R1
+            LOOP1: ADD R1, #2
+            SUB R3, R4 // UPPER/LOWER CASE DOES NOT MATTER
+            MOV R3 R4 // COMMAS ARE OPTIONAL
+            MOV R4, #34 // # IS MANDATORY FOR ANY IMMEDIATE
+            MOV R4, #0X22 // HEX IS OK
+            MOV R4, #0B100010 // BINARY IS OK
+            LDR R0, R1
+
+            //GAPS ARE IGNORED
+
+            JNE LOOP1 // JUMP TO INSTRUCTION TAGGED LOOP1
+            EXT #0X12 // THIS COMMENT GETS REMOVED
+            MOV R0, #0X10
+            // THIS IS A COMMENT AS WELL
+        </textarea>   
         <div id="lineNumbers" class="lineNumbers">
             <span id="0">0</span>
         </div>
