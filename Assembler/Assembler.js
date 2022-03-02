@@ -221,10 +221,8 @@ function runAssembler(){
 	let symbolTable;
 	
 	try { // try to generate a symbol table, will throw errors by line if it fails
-		if (currentCPU != 'EEP0') {
-			// dictionary where key is the symbol string and the value is an array with address and boolean to keep track of its usage
-			symbolTable = createSymbolTable(inputText, Object.keys(currentAssembler.OPCODES)); // function that finds all symbols in input text
-		}
+		// dictionary where key is the symbol string and the value is an array with address and boolean to keep track of its usage
+		symbolTable = createSymbolTable(inputText, Object.keys(currentAssembler.OPCODES)); // function that finds all symbols in input text
 	
 		let assemblerErrors = [];
 
@@ -234,16 +232,9 @@ function runAssembler(){
 			if(inputLine != ''){				
 				try {
 
-					if (currentCPU != 'EEP0') {
+					let resolvedOpCode = currentAssembler.OpCodeResolver(inputLine, outputEncoding, symbolTable); // beacuse EEP1 will always have symbol table
 
-						let resolvedOpCode = currentAssembler.OpCodeResolver(inputLine, outputEncoding, symbolTable); // beacuse EEP1 will always have symbol table
-
-						lineDiv.innerHTML = `${resolvedOpCode}<br>`;
-
-					} else {
-						let resolvedOpCode = currentAssembler.OpCodeResolver(inputLine, outputEncoding);
-						lineDiv.innerHTML = `${resolvedOpCode}<br>`;
-					}
+					lineDiv.innerHTML = `${resolvedOpCode}<br>`;
 
 				} catch(errs) {				
 					//errors found therefore update the download div so it doesn't work
@@ -264,18 +255,18 @@ function runAssembler(){
 			throw new MultipleErrors('Multiple Assembler Errors detected!', assemblerErrors);
 		}
 		//finished going through input lines, check if all symbols have been used:
-		if (currentCPU != 'EEP0') {
-			let warningDiv = document.createElement('div');
-			warningDiv.setAttribute('id', 'warnings');
 
-			for(const [symbol, obj] of symbolTable){
-				if(!obj.used){ // symbol hasn't been used:				
-					warningDiv.innerHTML += `Warning: ${symbol} was never used<br>`;
-				}
+		let warningDiv = document.createElement('div');
+		warningDiv.setAttribute('id', 'warnings');
+
+		for(const [symbol, obj] of symbolTable){
+			if(!obj.used){ // symbol hasn't been used:				
+				warningDiv.innerHTML += `Warning: ${symbol} was never used<br>`;
 			}
-
-			if (warningDiv.innerHTML != '') AssemblyOutput.appendChild(warningDiv);
 		}
+
+		if (warningDiv.innerHTML != '') AssemblyOutput.appendChild(warningDiv);
+	
 
 		downloadButton.setAttribute('downloadable', 'true'); // is downloadable only if nothing thrown up to here
 

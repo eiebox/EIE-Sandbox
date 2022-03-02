@@ -33,8 +33,8 @@ export const OPCODES = { // OPCODE structure is [ OPCODE, MAX_OPERANDS, OPERAND_
     "XOR": [0x6, 3, 'Ra', 'Op'],    
     "LSR": [0x7, 3, 'Ra', '0', 'Rb', '#Imms5'],
 // LDR / STR
-    "LDR": [0b1000, 'Ra', 'Op'],
-    "STR": [0b1010, 'Ra', 'Op'],
+    "LDR": [0b1000, 3, 'Ra', 'Op'],
+    "STR": [0b1010, 3, 'Ra', 'Op'],
 }
 
 /* Define functions to interpret different parts of the instructions */
