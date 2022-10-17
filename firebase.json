@@ -1,0 +1,10 @@
+{
+  "hosting": {
+    "public": "EIE-Sandbox-main",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ]
+  }
+}
