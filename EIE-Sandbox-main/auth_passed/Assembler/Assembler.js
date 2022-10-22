@@ -1,4 +1,4 @@
-import { AssemblerError, MultipleErrors, InvalidInputError, InvalidOpcodeError, ImmOutRangeError, OperandSizeError, RegOutRangeError } from '../js/errorClasses.js';
+import { AssemblerError, MultipleErrors, InvalidInputError, InvalidOpcodeError, ImmOutRangeError, OperandSizeError, RegOutRangeError } from '../../js/errorClasses.js';
 
 
 // HTML consts
@@ -33,7 +33,7 @@ function initAssembler() {
 	currentCPU = urlParams.get('cpu')?.toUpperCase();
 	if (!assemblerVersions.includes(currentCPU)) alert('Invalid Assembler Version! Please select version from the drop-down above. Undefined behaviour.');
 
-	import(`../js/${currentCPU}.js`)
+	import(`../../js/${currentCPU}.js`)
 		.then(module => {
 			// assign just loaded module to global variable
 			currentAssembler = module;

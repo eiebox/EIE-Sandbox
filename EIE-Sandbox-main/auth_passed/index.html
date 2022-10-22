@@ -3,11 +3,11 @@
     <head>
         <meta charset="UTF-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <link rel="icon" href="./favicon.ico" sizes="any">
-        <link rel="icon" href="./favicon.svg" type="image/svg+xml">
-        <!-- <link rel="manifest" href="../manifest.webmanifest"> -->
+        <link rel="icon" href="../favicon.ico" sizes="any">
+        <link rel="icon" href="../favicon.svg" type="image/svg+xml">
+        <!-- <link rel="manifest" href="../../manifest.webmanifest"> -->
         <!-- START NAVBAR STYLING-->
-        <link rel="stylesheet" href="./css/navbar.css">
+        <link rel="stylesheet" href="../css/navbar.css">
   <!-- Style for the dropdown thing-->
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 <!-- END NAVBAR STYLING-->
@@ -26,7 +26,7 @@
 <!-- START OF NAVBAR STUFF -->
     <body style="background-color: #333333;">
       <div class="TopNavBar">
-        <a href="index.html"><img src="./StaticContent/Logo.svg" id="Logo"/></a>
+        <a href="index.html"><img src="../StaticContent/Logo.svg" id="Logo"/></a>
         <div class="dropdown">
           <button id="dropBtn">
             <i class="fa fa-caret-right"></i>
@@ -66,60 +66,5 @@
           Find the GitHub <a href="https://github.com/omalley242/EIE-Sandbox">here</a>!
         </div>
       </footer> 
-
-    <!--Google Authentication-->
-    <script src="https://www.gstatic.com/firebasejs/6.3.3/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/6.3.3/firebase-auth.js"></script>
-
-    <!-- Firebase UI -->
-    <script src="https://cdn.firebase.com/libs/firebaseui/3.5.2/firebaseui.js"></script>
-    <link
-        type="text/css"
-        rel="stylesheet"
-        href="https://cdn.firebase.com/libs/firebaseui/3.5.2/firebaseui.css"
-    />
-
-    <script type="module">
-
-        const firebaseConfig = {
-          apiKey: "AIzaSyCo7cmt8Bo-ke6oO2_qoOo4K68EG9qpltE",
-          authDomain: "eiebox.dev",
-          projectId: "eiebox",
-          storageBucket: "eiebox.appspot.dev",
-          messagingSenderId: "315807993179",
-          appId: "1:315807993179:web:2c6e486790321846e19e7e",
-          measurementId: "G-BQ5N6Z6HRJ"
-        };
-
-        firebase.initializeApp(firebaseConfig);
-
-        // 1) Create a new firebaseui.auth instance stored to our local variable ui
-        const ui = new firebaseui.auth.AuthUI(firebase.auth())
-
-        // 2) These are our configurations.
-        const uiConfig = {
-          callbacks: {
-            signInSuccessWithAuthResult(authResult, redirectUrl) {
-              return true
-            },
-            uiShown() { 
-              document.getElementById("loader").style.display = "none"
-            },
-          },
-          signInFlow: "popup",
-          signInSuccessUrl: "auth_passed",
-          signInOptions: [
-            firebase.auth.EmailAuthProvider.PROVIDER_ID,
-            firebase.auth.GoogleAuthProvider.PROVIDER_ID,
-            // Additional login options should be listed here
-            // once they are enabled within the console.
-          ],
-        }
-
-        // 3) Call the 'start' method on our ui class
-        // including our configuration options.
-        ui.start("#firebaseui-auth-container", uiConfig)
-
-    </script>
     </body>
 </html>
